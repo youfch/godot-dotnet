@@ -1,0 +1,26 @@
+<Project>
+
+  <!--
+    TODO: We're currently rooting the assemblies because we don't support trimming properly.
+          Remove this when trimming is supported.
+  -->
+  <ItemGroup>
+    <TrimmerRootAssembly Include="GodotSharp" Condition="'$(EnableGodotDotNetPreview)' != 'true' and '$(DisableImplicitGodotSharpReferences)' != 'true'" />
+    <TrimmerRootAssembly Include="Godot.Bindings" Condition="'$(EnableGodotDotNetPreview)' == 'true'" />
+    <TrimmerRootAssembly Include="$(TargetName)" />
+  </ItemGroup>
+
+  <Target Name="FixSymbols" AfterTargets="Publish">
+    <!--
+      create-xcframework (called from the export plugin) wants the symbol files in a directory
+      with a slightly different name from the one created by dotnet publish, so we copy them over
+      to the correctly-named directory.
+    -->
+    <RemoveDir Directories="$(PublishDir)$(TargetName).framework.dSYM" />
+    <ItemGroup>
+      <SymbolFiles Include="$(NativeBinary).dsym\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SymbolFiles)" DestinationFolder="$(PublishDir)$(TargetName).framework.dSYM" />
+  </Target>
+
+</Project>
