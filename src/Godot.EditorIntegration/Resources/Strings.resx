@@ -184,6 +184,9 @@
   <data name="DotNetEditorPlugin_AlertTitleWarning" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="DotNetEditorPlugin_BuildProject" xml:space="preserve">
+    <value>Build .NET project</value>
+  </data>
   <data name="DotNetEditorPlugin_CreateCSharpProjectFailed" xml:space="preserve">
     <value>Failed to create C# project. Exception message: {exceptionMessage}</value>
   </data>

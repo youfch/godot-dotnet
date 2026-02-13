@@ -26,8 +26,6 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
 
     private ConfirmationDialog _confirmCreateSlnDialog;
 
-    private PopupMenu _toolsMenuPopup;
-
     private MSBuildPanel _msbuildPanel;
 
     private Button _toolBarBuildButton;
@@ -221,13 +219,19 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
         _msbuildPanel = new MSBuildPanel();
         AddDock(_msbuildPanel);
 
-        // .NET tools menu.
+        // Create solution command.
 
-        _toolsMenuPopup = new PopupMenu();
-        _toolsMenuPopup.AddItem(SR.DotNetEditorPlugin_CreateCSharpSolution, (int)MenuOptions.CreateSln);
-        _toolsMenuPopup.IdPressed += MenuOptionPressed;
-
-        AddToolSubmenuItem(".NET/C#", _toolsMenuPopup);
+        EditorInterface.Singleton.GetCommandPalette().AddCommand(SR.DotNetEditorPlugin_CreateCSharpSolution, "dotnet/create_solution", Callable.From(() =>
+        {
+            if (File.Exists(EditorPath.ProjectSlnPath) || File.Exists(EditorPath.ProjectCSProjPath))
+            {
+                ShowConfirmCreateSlnDialog();
+            }
+            else
+            {
+                CreateProjectSolution();
+            }
+        }));
 
         // .NET build button.
 
@@ -241,6 +245,7 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
             ThemeTypeVariation = EditorThemeNames.RunBarButton,
         };
         EditorInternal.EditorShortcutOverride(EditorShortcutNames.BuildSolution, "macos", (Key)KeyModifierMask.MaskMeta | (Key)KeyModifierMask.MaskCtrl | Key.B);
+        EditorInterface.Singleton.GetCommandPalette().AddCommand(SR.DotNetEditorPlugin_BuildProject, EditorShortcutNames.BuildSolution, Callable.From(BuildProjectPressed), _toolBarBuildButton.Shortcut.GetAsText());
 
         _toolBarBuildButton.Pressed += BuildProjectPressed;
         EditorInternal.AddControlToEditorRunBar(_toolBarBuildButton);
@@ -344,9 +349,6 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
 
         // .NET build button.
         _toolBarBuildButton?.QueueFree();
-
-        // .NET tools menu.
-        _toolsMenuPopup?.QueueFree();
 
         // MSBuild panel.
         _msbuildPanel?.QueueFree();
