@@ -252,8 +252,7 @@ internal sealed class CacheStringNameOrNodePathCodeFix : CodeFixProvider
         // Avoid conflicts by appending a counter if needed.
         var existingMembers = new HashSet<string>(
             typeSymbol.GetMembers()
-                .OfType<IFieldSymbol>()
-                .Select(f => f.Name));
+                .Select(m => m.Name));
 
         string baseName = fieldName;
         int counter = 1;
@@ -270,7 +269,7 @@ internal sealed class CacheStringNameOrNodePathCodeFix : CodeFixProvider
     {
         foreach (var memberSymbol in containingTypeSymbol.GetMembers())
         {
-            if (IsCachedField(memberSymbol, typeSymbol, stringValue))
+            if (IsCachedMember(memberSymbol, typeSymbol, stringValue))
             {
                 fieldName = memberSymbol.Name;
                 return true;
@@ -280,14 +279,19 @@ internal sealed class CacheStringNameOrNodePathCodeFix : CodeFixProvider
         fieldName = null;
         return false;
 
-        // The member must be a static readonly field with the same type and initializer value.
-        static bool IsCachedField(ISymbol memberSymbol, ITypeSymbol typeSymbol, string stringValue)
+        static bool IsCachedMember(ISymbol memberSymbol, ITypeSymbol typeSymbol, string stringValue)
         {
-            if (memberSymbol is not IFieldSymbol fieldSymbol)
+            return memberSymbol switch
             {
-                return false;
-            }
+                IFieldSymbol fieldSymbol => IsCachedField(fieldSymbol, typeSymbol, stringValue),
+                IPropertySymbol propertySymbol => IsCachedProperty(propertySymbol, typeSymbol, stringValue),
+                _ => false,
+            };
+        }
 
+        // The member must be a static readonly field with the same type and initializer value.
+        static bool IsCachedField(IFieldSymbol fieldSymbol, ITypeSymbol typeSymbol, string stringValue)
+        {
             if (!fieldSymbol.IsStatic)
             {
                 return false;
@@ -318,11 +322,51 @@ internal sealed class CacheStringNameOrNodePathCodeFix : CodeFixProvider
             return false;
         }
 
+        // The member must be a static get-only auto-property with the same type and initializer value.
+        static bool IsCachedProperty(IPropertySymbol propertySymbol, ITypeSymbol typeSymbol, string stringValue)
+        {
+            if (!propertySymbol.IsStatic)
+            {
+                return false;
+            }
+
+            if (!propertySymbol.IsReadOnly)
+            {
+                return false;
+            }
+
+            if (!propertySymbol.Type.EqualsType(typeSymbol.FullQualifiedNameOmitGlobal()))
+            {
+                return false;
+            }
+
+            foreach (var syntaxReference in propertySymbol.DeclaringSyntaxReferences)
+            {
+                var syntax = syntaxReference.GetSyntax();
+                if (syntax is PropertyDeclarationSyntax propertyDeclaration)
+                {
+                    if (IsMatchingInitializer(propertyDeclaration.Initializer, typeSymbol, stringValue))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         static bool IsMatchingInitializer(EqualsValueClauseSyntax? initializer, ITypeSymbol typeSymbol, string stringValue)
         {
             if (initializer is null)
             {
                 return false;
+            }
+
+            // The initializer can be a plain string literal (implicit conversion).
+            if (initializer.Value is LiteralExpressionSyntax implicitLiteral
+             && implicitLiteral.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                return implicitLiteral.Token.ValueText == stringValue;
             }
 
             // The initializer expression must be the StringName/NodePath constructor.

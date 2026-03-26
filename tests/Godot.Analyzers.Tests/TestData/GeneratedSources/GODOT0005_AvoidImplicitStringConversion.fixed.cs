@@ -23,7 +23,23 @@ public partial class MyNode : Node
 
     private static readonly StringName MyName = new StringName("MyName");
 
+    private static readonly StringName InstanceField1 = new StringName("InstanceField");
+
+    private static readonly StringName InstanceProperty1 = new StringName("InstanceProperty");
+
+    private static readonly StringName StaticProperty1 = new StringName("StaticProperty");
+
     private static readonly StringName ExistingCachedField = new StringName("ExistingCachedValue");
+
+    private static readonly StringName ExistingCacheFieldUsingImplicitConversion = "ExistingCachedValueImplicitField";
+
+    private static StringName ExistingCachePropertyUsingImplicitConversion { get; } = "ExistingCachedValueImplicitProperty";
+
+    private static StringName StaticProperty => StaticProperty1;
+
+    private StringName InstanceProperty { get; } = InstanceProperty1;
+
+    private readonly StringName InstanceField = InstanceField1;
 
     public void TestImplicitStringNameConversion()
     {
@@ -70,6 +86,9 @@ public partial class MyNode : Node
     {
         StringName name1 = ExistingCachedField;
         StringName name2 = ExistingCachedField;
+
+        StringName name3 = ExistingCacheFieldUsingImplicitConversion;
+        StringName name4 = ExistingCachePropertyUsingImplicitConversion;
     }
 
     public void TestDuplicateValues()

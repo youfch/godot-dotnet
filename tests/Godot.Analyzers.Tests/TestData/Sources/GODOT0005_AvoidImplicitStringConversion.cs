@@ -7,6 +7,16 @@ public partial class MyNode : Node
 {
     private static readonly StringName ExistingCachedField = new StringName("ExistingCachedValue");
 
+    private static readonly StringName ExistingCacheFieldUsingImplicitConversion = "ExistingCachedValueImplicitField";
+
+    private static StringName ExistingCachePropertyUsingImplicitConversion { get; } = "ExistingCachedValueImplicitProperty";
+
+    private static StringName StaticProperty => {|GODOT0005:"StaticProperty"|};
+
+    private StringName InstanceProperty { get; } = {|GODOT0005:"InstanceProperty"|};
+
+    private readonly StringName InstanceField = {|GODOT0005:"InstanceField"|};
+
     public void TestImplicitStringNameConversion()
     {
         StringName name1 = {|GODOT0005:"MyName"|};
@@ -52,6 +62,9 @@ public partial class MyNode : Node
     {
         StringName name1 = {|GODOT0005:"ExistingCachedValue"|};
         StringName name2 = {|GODOT0005:"ExistingCachedValue"|};
+
+        StringName name3 = {|GODOT0005:"ExistingCachedValueImplicitField"|};
+        StringName name4 = {|GODOT0005:"ExistingCachedValueImplicitProperty"|};
     }
 
     public void TestDuplicateValues()

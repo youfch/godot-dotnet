@@ -48,11 +48,64 @@ internal sealed class ImplicitStringConversionAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        if (IsInStaticFieldOrPropertyInitializer(conversion))
+        {
+            // Static field/property initializers run once per type, so there's no performance concern.
+            return;
+        }
+
         context.ReportDiagnostic(Diagnostic.Create(
             Descriptors.GODOT0005_AvoidImplicitStringConversion,
             conversion.Syntax.GetLocation(),
             // Message Format parameters.
             targetType.Name
         ));
+    }
+
+    private static bool IsInStaticFieldOrPropertyInitializer(IOperation operation)
+    {
+        IOperation? parent = operation.Parent;
+
+        while (parent is not null)
+        {
+            switch (parent)
+            {
+                case IFieldInitializerOperation fieldInitializer:
+                    return IsStaticFieldInitializer(fieldInitializer);
+
+                case IPropertyInitializerOperation propertyInitializer:
+                    return IsStaticPropertyInitializer(propertyInitializer);
+            }
+
+            parent = parent.Parent;
+        }
+
+        return false;
+
+        static bool IsStaticFieldInitializer(IFieldInitializerOperation fieldInitializer)
+        {
+            foreach (var field in fieldInitializer.InitializedFields)
+            {
+                if (field.IsStatic)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool IsStaticPropertyInitializer(IPropertyInitializerOperation propertyInitializer)
+        {
+            foreach (var property in propertyInitializer.InitializedProperties)
+            {
+                if (property.IsStatic)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
