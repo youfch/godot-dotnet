@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <IncludeContentInPack>false</IncludeContentInPack>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -13,23 +12,23 @@
 
       This package is a meta package that simplifies referencing all recommended Godot packages.
     </Description>
-    <NuspecFile>Godot.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Nothing in lib but that's expected since this is a meta package. -->
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddEmptyTfmDirectoryInLib</TargetsForTfmSpecificContentInPackage>
     <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
 
-  <ItemGroup>
-    <NuspecProperty Include="RepoRoot=$(RepoRoot)" />
-  </ItemGroup>
+  <Target Name="_AddEmptyTfmDirectoryInLib">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="_._" PackagePath="lib/$(TargetFramework)/" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
-    <!-- Not a real dependency but it ensures correct build order. -->
     <ProjectReference Include="..\Godot.Bindings\Godot.Bindings.csproj" />
+    <ProjectReference Include="..\Godot.Analyzers\Godot.Analyzers.csproj" />
+    <ProjectReference Include="..\Godot.SourceGeneration\Godot.SourceGeneration.csproj" />
   </ItemGroup>
 
 </Project>
