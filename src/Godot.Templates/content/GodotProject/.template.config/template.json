@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Godot Engine contributors",
+  "classifications": ["Godot", "Games"],
+  "name": "Godot project",
+  "description": "Creates a new Godot .NET project",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "groupIdentity": "Godot.Templates.Project",
+  "identity": "Godot.Templates.Project",
+  "shortName": "godot",
+  "sourceName": "GodotProjectName",
+  "preferNameDirectory": true,
+  "primaryOutputs": [{
+    "path": "GodotProjectName.csproj"
+  },
+  {
+    "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+    "path": "Main.cs"
+  }],
+  "symbols": {
+    "HostIdentifier": {
+      "type": "bind",
+      "binding": "host:HostIdentifier"
+    },
+    "GodotVersion": {
+      "type": "parameter",
+      "displayName": "Godot version",
+      "description": "Sets the Godot.NET.Sdk version in the created project.",
+      "replaces": "$(ProjectGodotVersion)",
+      "datatype": "string",
+      "defaultValue": "DEFAULT_GODOT_VERSION"
+    },
+    "TargetFramework": {
+      "type": "parameter",
+      "displayName": "Target framework",
+      "description": "Sets the TargetFramework property in the created project.",
+      "replaces": "$(ProjectTargetFramework)",
+      "datatype": "string",
+      "defaultValue": "DEFAULT_TFM"
+    },
+    "LangVersion": {
+      "type": "parameter",
+      "displayName": "Language version",
+      "description": "Sets the LangVersion property in the created project.",
+      "replaces": "$(ProjectLanguageVersion)",
+      "datatype": "string",
+      "defaultValue": ""
+    },
+    "SkipRestore": {
+      "type": "parameter",
+      "displayName": "Skip restore",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "datatype": "bool",
+      "defaultValue": "false"
+    }
+  },
+  "postActions": [
+    {
+      "id": "restore",
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "condition": "(!SkipRestore)",
+      "description": "Restore NuGet packages required by this project.",
+      "manualInstructions": [{
+        "text": "Run 'dotnet restore'"
+      }],
+      "continueOnError": true
+    },
+    {
+      "id": "open-file",
+      "actionId": "84C0DA21-51C8-4541-9940-6CA19AF04EE6",
+      "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "description": "Opens Main.cs in the editor.",
+      "manualInstructions": [],
+      "args": {
+        "files": "1"
+      },
+      "continueOnError": true
+    }
+  ]
+}

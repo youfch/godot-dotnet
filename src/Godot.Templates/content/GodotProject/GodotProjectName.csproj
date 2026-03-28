@@ -1,0 +1,16 @@
+﻿<Project Sdk="Godot.NET.Sdk/$(ProjectGodotVersion)">
+
+  <PropertyGroup>
+    <TargetFramework>$(ProjectTargetFramework)</TargetFramework>
+    <RootNamespace Condition="'$(name)' != '$(name{-VALUE-FORMS-}safe_namespace)'">GodotProjectName</RootNamespace>
+    <LangVersion Condition="'$(LangVersion)' != ''">$(ProjectLanguageVersion)</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Enable Godot .NET packages. See https://github.com/godotengine/godot-dotnet for more information. -->
+    <EnableGodotDotNetPreview>true</EnableGodotDotNetPreview>
+  </PropertyGroup>
+
+</Project>

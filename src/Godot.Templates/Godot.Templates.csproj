@@ -1,0 +1,118 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <UsingToolTemplateLocalizer>true</UsingToolTemplateLocalizer>
+    <IncludeSource>false</IncludeSource>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <SuppressDependenciesWhenPacking>True</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <PackageType>Template</PackageType>
+    <Title>Godot .NET Templates</Title>
+    <Description>Templates to create Godot projects and classes.</Description>
+    <PackageTags>dotnet-new templates $(PackageTags)</PackageTags>
+    <language>en-US</language>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- No source files but that's expected since this a templates package. -->
+    <NoWarn>$(NoWarn);CS2008;CA1016</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Include template contents so they show up in IDEs.
+      Using <None> so they are not part of the compilation.
+    -->
+    <None Include="content\**\*" />
+  </ItemGroup>
+
+  <!--
+    Packaging the templates.
+    See https://github.com/microsoft/aspire/blob/51695cd814a69466635c49a805ffaabf76452272/src/Aspire.ProjectTemplates/Aspire.ProjectTemplates.csproj
+  -->
+
+  <ItemGroup>
+    <!-- Template config files: .template.config\*.json -->
+    <TemplateConfigFiles Include="$(MSBuildThisFileDirectory)content\**\.template.config\*.json">
+      <PackagePath>content/%(RecursiveDir)</PackagePath>
+      <DestinationFile>$(IntermediateOutputPath)content\%(RecursiveDir)%(Filename)%(Extension)</DestinationFile>
+    </TemplateConfigFiles>
+
+    <TemplateConfigFilesObj Include="@(TemplateConfigFiles->'%(DestinationFile)')" />
+
+    <TemplateFiles Include="$(MSBuildThisFileDirectory)content\**\*"
+                   Exclude="$(MSBuildThisFileDirectory)content\**\bin\**;$(MSBuildThisFileDirectory)content\**\obj\**">
+      <PackagePath>content/%(RecursiveDir)</PackagePath>
+    </TemplateFiles>
+
+    <TemplateFilesObj Include="@(TemplateFiles->'$(IntermediateOutputPath)content\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </ItemGroup>
+
+  <!--
+    Inline MSBuild task to replace a literal string in a single file.
+  -->
+  <UsingTask TaskName="ReplaceTextInFile"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <FilePath ParameterType="System.String" Required="true" />
+      <OldValue ParameterType="System.String" Required="true" />
+      <NewValue ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        string content = File.ReadAllText(FilePath);
+        File.WriteAllText(FilePath, content.Replace(OldValue, NewValue));
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+    When building a package, this target will run to copy all the templates into the intermediate directory,
+    replaces the package versions, and adds them to the package.
+  -->
+  <Target Name="AddTemplatesToPackageAsContent"
+          AfterTargets="Build"
+          DependsOnTargets="ReplacePackageVersionOnTemplates">
+    <ItemGroup>
+      <Content Include="@(TemplateFilesObj)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Replaces the versions referenced by the templates projects to use the version of the package being live-built.
+  -->
+  <Target Name="ReplacePackageVersionOnTemplates"
+          DependsOnTargets="CopyTemplatesToIntermediateOutputPath">
+    <ReplaceTextInFile
+        FilePath="$(IntermediateOutputPath)content/GodotProject/.template.config/template.json"
+        OldValue="DEFAULT_GODOT_VERSION"
+        NewValue="$(PackageVersion)" />
+    <ReplaceTextInFile
+        FilePath="$(IntermediateOutputPath)content/GodotProject/.template.config/template.json"
+        OldValue="DEFAULT_TFM"
+        NewValue="$(TargetFramework)" />
+  </Target>
+
+  <!--
+    Grabs the contents of the templates folder and copies them to IntermediateOutputPath directory.
+  -->
+  <Target Name="CopyTemplatesToIntermediateOutputPath"
+          Inputs="@(TemplateFiles)"
+          Outputs="@(TemplateFilesObj)">
+    <Copy SourceFiles="@(TemplateFiles)"
+          DestinationFiles="@(TemplateFilesObj)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

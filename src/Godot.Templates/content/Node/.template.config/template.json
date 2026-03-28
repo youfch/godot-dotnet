@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Godot Engine contributors",
+  "classifications": ["Godot", "Games"],
+  "name": "Godot Node",
+  "description": "Creates a new Godot Node class",
+  "tags": {
+    "language": "C#",
+    "type": "item"
+  },
+  "groupIdentity": "Godot.Templates.Node",
+  "identity": "Godot.Templates.Node",
+  "shortName": "godotnode",
+  "sourceName": "MyNode",
+  "preferDefaultName": true,
+  "defaultName": "MyNode",
+  "primaryOutputs": [{
+    "path": "MyNode.cs"
+  }],
+  "symbols": {
+    "DefaultNamespace": {
+      "type": "bind",
+      "binding": "msbuild:RootNamespace",
+      "replaces": "MyNamespace"
+    }
+  },
+  "constraints": {
+    "csharp-only": {
+      "type": "project-capability",
+      "args": "CSharp"
+    }
+  }
+}

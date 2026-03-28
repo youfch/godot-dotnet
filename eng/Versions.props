@@ -35,6 +35,8 @@
     <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
     <!-- Solution Persistence -->
     <MicrosoftVisualStudioSolutionPersistenceVersion>1.0.52</MicrosoftVisualStudioSolutionPersistenceVersion>
+    <!-- Template Engine Authoring -->
+    <MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>9.0.312</MicrosoftTemplateEngineAuthoringTemplateVerifierVersion>
     <!-- MSTest -->
     <MicrosoftNETTestSdkVersion>17.10.0</MicrosoftNETTestSdkVersion>
     <!-- XUnit -->
