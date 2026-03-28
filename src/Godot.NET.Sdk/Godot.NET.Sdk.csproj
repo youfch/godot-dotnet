@@ -27,6 +27,11 @@
     <IsShipping>false</IsShipping>
     <IsShipping Condition="'$(OfficialBuild)' == 'true' and '$(FinalVersionKind)' == 'prerelease'
                        and !$(_BannedLabels.Contains(';$(PreReleaseVersionLabel.Split('.')[0]);'))">true</IsShipping>
+    <!--
+      We make an exception for non official builds, which are local development builds,
+      so we can easily add the package to test environments.
+    -->
+    <IsShipping Condition="'$(OfficialBuild)' != 'true'">true</IsShipping>
   </PropertyGroup>
 
   <Target Name="GenerateSdkPackageVersions" BeforeTargets="BeforeBuild">

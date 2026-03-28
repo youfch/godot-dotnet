@@ -28,6 +28,7 @@
     <Project Path="tests/Godot.SourceGeneration.Tests/Godot.SourceGeneration.Tests.csproj" />
     <Project Path="tests/Godot.Common.Tests/Godot.Common.Tests.csproj" />
     <Project Path="tests/Godot.Common.CodeAnalysis.Tests/Godot.Common.CodeAnalysis.Tests.csproj" />
+    <Project Path="tests/Godot.Templates.IntegrationTests/Godot.Templates.IntegrationTests.csproj" />
     <Project Path="tests/Godot.Bindings.IntegrationTests/Godot.Bindings.IntegrationTests.csproj" />
     <Project Path="tests/Godot.Bindings.IntegrationTests.TestGame/Godot.Bindings.IntegrationTests.TestGame.csproj" />
   </Folder>
