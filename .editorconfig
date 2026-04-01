@@ -15,6 +15,10 @@ indent_size = 2
 indent_style = space
 indent_size = 2
 
+# Batch scripts require CRLF line endings to work correctly.
+[*.{cmd,bat}]
+end_of_line = crlf
+
 [*.py]
 indent_style = space
 indent_size = 4
