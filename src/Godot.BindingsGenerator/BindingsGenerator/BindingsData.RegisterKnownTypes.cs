@@ -247,13 +247,13 @@ partial class BindingsData
         _typeDB.RegisterUnmanagedType(KnownTypes.GodotArrayGeneric, KnownTypes.NativeGodotArray);
         _typeDB.RegisterUnmanagedType(KnownTypes.GodotDictionaryGeneric, KnownTypes.NativeGodotDictionary);
 
-        RegisterPtrMarshaller(KnownTypes.GodotArray, new InteropStructPtrMarshallerWriter(KnownTypes.GodotArray, KnownTypes.NativeGodotArray.MakePointerType()));
-        RegisterPtrMarshaller(KnownTypes.GodotArrayGeneric, new InteropStructPtrMarshallerWriter(KnownTypes.GodotArrayGeneric, KnownTypes.NativeGodotArray.MakePointerType()));
-        RegisterPtrMarshaller(KnownTypes.NativeGodotArray, new InteropStructPtrMarshallerWriter(KnownTypes.NativeGodotArray));
+        RegisterPtrMarshaller(KnownTypes.GodotArray, new GodotArrayAndDictionaryPtrMarshallerWriter(KnownTypes.GodotArray, KnownTypes.NativeGodotArray.MakePointerType()));
+        RegisterPtrMarshaller(KnownTypes.GodotArrayGeneric, new GodotArrayAndDictionaryPtrMarshallerWriter(KnownTypes.GodotArrayGeneric, KnownTypes.NativeGodotArray.MakePointerType()));
+        RegisterPtrMarshaller(KnownTypes.NativeGodotArray, new GodotArrayAndDictionaryPtrMarshallerWriter(KnownTypes.NativeGodotArray));
 
-        RegisterPtrMarshaller(KnownTypes.GodotDictionary, new InteropStructPtrMarshallerWriter(KnownTypes.GodotDictionary, KnownTypes.NativeGodotDictionary.MakePointerType()));
-        RegisterPtrMarshaller(KnownTypes.GodotDictionaryGeneric, new InteropStructPtrMarshallerWriter(KnownTypes.GodotDictionaryGeneric, KnownTypes.NativeGodotDictionary.MakePointerType()));
-        RegisterPtrMarshaller(KnownTypes.NativeGodotDictionary, new InteropStructPtrMarshallerWriter(KnownTypes.NativeGodotDictionary));
+        RegisterPtrMarshaller(KnownTypes.GodotDictionary, new GodotArrayAndDictionaryPtrMarshallerWriter(KnownTypes.GodotDictionary, KnownTypes.NativeGodotDictionary.MakePointerType()));
+        RegisterPtrMarshaller(KnownTypes.GodotDictionaryGeneric, new GodotArrayAndDictionaryPtrMarshallerWriter(KnownTypes.GodotDictionaryGeneric, KnownTypes.NativeGodotDictionary.MakePointerType()));
+        RegisterPtrMarshaller(KnownTypes.NativeGodotDictionary, new GodotArrayAndDictionaryPtrMarshallerWriter(KnownTypes.NativeGodotDictionary));
 
         RegisterVariantMarshaller(KnownTypes.GodotArray, new InteropStructVariantMarshallerWriter(KnownTypes.GodotArray, "Array", KnownTypes.NativeGodotArray, createMethodSuffix: "Copying"));
         RegisterVariantMarshaller(KnownTypes.GodotArrayGeneric, new InteropStructVariantMarshallerWriter(KnownTypes.GodotArrayGeneric, "Array", KnownTypes.NativeGodotArray, createMethodSuffix: "Copying"));

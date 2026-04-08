@@ -22,6 +22,20 @@ internal abstract class VariantMarshallerWriter
     public virtual bool NeedsCleanup => true;
 
     /// <summary>
+    /// Indicates whether the marshaller needs to cleanup afterwards when used for parameters.
+    /// By default, it inherits the value of <see cref="NeedsCleanup"/> but it can be overridden
+    /// if the marshaller only needs to cleanup for parameters or for return values.
+    /// </summary>
+    public virtual bool NeedsCleanupForParameters => NeedsCleanup;
+
+    /// <summary>
+    /// Indicates whether the marshaller needs to cleanup afterwards when used for return values.
+    /// By default, it inherits the value of <see cref="NeedsCleanup"/> but it can be overridden
+    /// if the marshaller only needs to cleanup for parameters or for return values.
+    /// </summary>
+    public virtual bool NeedsCleanupForReturnValue => NeedsCleanup;
+
+    /// <summary>
     /// Write the necessary lines to setup the conversion to unmanaged.
     /// The marshaller may create an aux variable with the name
     /// <paramref name="destination"/> if it needs it for marshalling and returns
@@ -122,4 +136,58 @@ internal abstract class VariantMarshallerWriter
 
     /// <inheritdoc cref="WriteFree(IndentedTextWriter, TypeInfo, string)"/>
     protected abstract void WriteFreeCore(IndentedTextWriter writer, TypeInfo type, string source);
+
+    /// <summary>
+    /// Write the necessary lines to free the <see cref="KnownTypes.NativeGodotVariant"/>
+    /// pointer stored in a variable with the name <paramref name="source"/>.
+    /// The pointer to free should be the one allocated by
+    /// <see cref="WriteConvertToVariant(IndentedTextWriter, TypeInfo, string, string)"/>.
+    /// </summary>
+    /// <remarks>
+    /// If this writer doesn't allocate memory in
+    /// <see cref="WriteConvertToVariant(IndentedTextWriter, TypeInfo, string, string)"/>
+    /// it doesn't have to free anything here and can be a no-op.
+    /// </remarks>
+    /// <param name="writer">Writer to write the lines to.</param>
+    /// <param name="type">Type that was converted.</param>
+    /// <param name="parameterName">Name of the parameter that <paramref name="source"/> corresponds to.</param>
+    /// <param name="source">Variable name of the source.</param>
+    public void WriteFreeForParameter(IndentedTextWriter writer, TypeInfo type, string parameterName, string source)
+    {
+        WriteFreeForParameterCore(writer, type, parameterName, source);
+    }
+
+    /// <inheritdoc cref="WriteFreeForParameter(IndentedTextWriter, TypeInfo, string, string)"/>
+    protected virtual void WriteFreeForParameterCore(IndentedTextWriter writer, TypeInfo type, string parameterName, string source)
+    {
+        WriteFreeCore(writer, type, source);
+    }
+
+    /// <summary>
+    /// Write the necessary lines to free the <see cref="KnownTypes.NativeGodotVariant"/>
+    /// pointer stored in a variable with the name <paramref name="source"/>.
+    /// The pointer to free should be the one allocated by
+    /// <see cref="WriteConvertToVariant(IndentedTextWriter, TypeInfo, string, string)"/>.
+    /// </summary>
+    /// <remarks>
+    /// If this writer doesn't allocate memory in
+    /// <see cref="WriteConvertToVariant(IndentedTextWriter, TypeInfo, string, string)"/>
+    /// it doesn't have to free anything here and can be a no-op.
+    /// </remarks>
+    /// <param name="writer">Writer to write the lines to.</param>
+    /// <param name="type">Type that was converted.</param>
+    /// <param name="returnVariableName">
+    /// Name of the return variable that <paramref name="source"/> corresponds to.
+    /// </param>
+    /// <param name="source">Variable name of the source.</param>
+    public void WriteFreeForReturnValue(IndentedTextWriter writer, TypeInfo type, string returnVariableName, string source)
+    {
+        WriteFreeForReturnValueCore(writer, type, returnVariableName, source);
+    }
+
+    /// <inheritdoc cref="WriteFreeForReturnValue(IndentedTextWriter, TypeInfo, string, string)"/>
+    protected virtual void WriteFreeForReturnValueCore(IndentedTextWriter writer, TypeInfo type, string returnVariableName, string source)
+    {
+        WriteFreeCore(writer, type, source);
+    }
 }

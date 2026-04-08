@@ -39,7 +39,7 @@ internal abstract class VarargCallMethodBody<TContext> : CallMethodBody<TContext
             var parameter = context.Parameters[i];
             var marshaller = TypeDB.GetVariantMarshaller(parameter.Type);
 
-            if (marshaller.NeedsCleanup)
+            if (marshaller.NeedsCleanupForParameters)
             {
                 needsCleanup = true;
             }
@@ -55,7 +55,7 @@ internal abstract class VarargCallMethodBody<TContext> : CallMethodBody<TContext
             {
                 var marshaller = TypeDB.GetPtrMarshaller(context.ReturnType);
 
-                if (marshaller.NeedsCleanup)
+                if (marshaller.NeedsCleanupForReturnValue)
                 {
                     needsCleanup = true;
                 }
@@ -66,7 +66,7 @@ internal abstract class VarargCallMethodBody<TContext> : CallMethodBody<TContext
             {
                 var marshaller = TypeDB.GetVariantMarshaller(context.ReturnType);
 
-                if (marshaller.NeedsCleanup)
+                if (marshaller.NeedsCleanupForReturnValue)
                 {
                     needsCleanup = true;
                 }
@@ -271,7 +271,7 @@ internal abstract class VarargCallMethodBody<TContext> : CallMethodBody<TContext
             var parameter = context.Parameters[i];
             var marshaller = context.ParameterMarshallers[i];
 
-            marshaller.WriteFree(writer, parameter.Type, $"{context.ArgsVariableName}[{i}]");
+            marshaller.WriteFreeForParameter(writer, parameter.Type, parameter.Name, $"{context.ArgsVariableName}[{i}]");
         }
 
         if (context.ReturnType is not null)
@@ -279,12 +279,12 @@ internal abstract class VarargCallMethodBody<TContext> : CallMethodBody<TContext
             if (context.MarshalReturnTypeAsPtr)
             {
                 var marshaller = context.ReturnPtrMarshaller!;
-                marshaller.WriteFree(writer, context.ReturnType, $"{context.ReturnVariableName}Ptr");
+                marshaller.WriteFreeForReturnValue(writer, context.ReturnType, context.ReturnVariableName, $"{context.ReturnVariableName}Ptr");
             }
             else
             {
                 var marshaller = context.ReturnVariantMarshaller!;
-                marshaller.WriteFree(writer, context.ReturnType, $"&{context.ReturnVariableName}Var");
+                marshaller.WriteFreeForReturnValue(writer, context.ReturnType, context.ReturnVariableName, $"&{context.ReturnVariableName}Var");
             }
         }
     }

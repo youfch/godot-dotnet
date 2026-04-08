@@ -24,6 +24,10 @@ internal sealed class EnumVariantMarshallerWriter : VariantMarshallerWriter
 
     public override bool NeedsCleanup => _underlyingMarshaller.NeedsCleanup;
 
+    public override bool NeedsCleanupForParameters => _underlyingMarshaller.NeedsCleanupForParameters;
+
+    public override bool NeedsCleanupForReturnValue => _underlyingMarshaller.NeedsCleanupForReturnValue;
+
     public EnumVariantMarshallerWriter(EnumInfo marshallableType)
     {
         _marshallableType = marshallableType;

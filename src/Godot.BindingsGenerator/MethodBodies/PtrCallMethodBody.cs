@@ -33,7 +33,7 @@ internal abstract class PtrCallMethodBody<TContext> : CallMethodBody<TContext> w
             var parameter = context.Parameters[i];
             var marshaller = TypeDB.GetPtrMarshaller(parameter.Type);
 
-            if (marshaller.NeedsCleanup)
+            if (marshaller.NeedsCleanupForParameters)
             {
                 needsCleanup = true;
             }
@@ -46,7 +46,7 @@ internal abstract class PtrCallMethodBody<TContext> : CallMethodBody<TContext> w
         {
             var marshaller = TypeDB.GetPtrMarshaller(context.ReturnType);
 
-            if (marshaller.NeedsCleanup)
+            if (marshaller.NeedsCleanupForReturnValue)
             {
                 needsCleanup = true;
             }
@@ -186,13 +186,13 @@ internal abstract class PtrCallMethodBody<TContext> : CallMethodBody<TContext> w
             // Pointer args always need to be casted because they come from a 'void**' variable.
             string source = $"({marshaller.UnmanagedPointerType.FullNameWithGlobal}){context.ArgsVariableName}[{i}]";
 
-            marshaller.WriteFree(writer, parameter.Type, source);
+            marshaller.WriteFreeForParameter(writer, parameter.Type, parameter.Name, source);
         }
 
         if (context.ReturnType is not null)
         {
             var marshaller = context.ReturnTypeMarshaller!;
-            marshaller.WriteFree(writer, context.ReturnType, $"{context.ReturnVariableName}Ptr");
+            marshaller.WriteFreeForReturnValue(writer, context.ReturnType, context.ReturnVariableName, $"{context.ReturnVariableName}Ptr");
         }
     }
 

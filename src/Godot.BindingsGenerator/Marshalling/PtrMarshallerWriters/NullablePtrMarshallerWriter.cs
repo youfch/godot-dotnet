@@ -19,6 +19,10 @@ internal sealed class NullablePtrMarshallerWriter : PtrMarshallerWriter
 
     public override bool NeedsCleanup => _underlyingMarshaller.NeedsCleanup;
 
+    public override bool NeedsCleanupForParameters => _underlyingMarshaller.NeedsCleanupForParameters;
+
+    public override bool NeedsCleanupForReturnValue => _underlyingMarshaller.NeedsCleanupForReturnValue;
+
     public NullablePtrMarshallerWriter(TypeInfo marshallableType, PtrMarshallerWriter underlyingMarshaller)
     {
         if (!marshallableType.IsGenericType || marshallableType.GenericTypeDefinition != KnownTypes.Nullable)
