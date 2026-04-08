@@ -121,7 +121,7 @@ internal static class DotNetCli
         };
 
         startInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"] =
-            ((string)EditorInterface.Singleton.GetEditorSettings().GetSetting("interface/editor/editor_language")).Replace('_', '-');
+            EditorInterface.Singleton.GetEditorLanguage().Replace('_', '-');
 
         // Some computers set the PLATFORM environment variable which conflicts with .NET, so remove it.
         // For more context see: https://github.com/dotnet/arcade/blob/4e73daf131ef02e8264b0d3e850c4bdafe6e02b6/eng/common/build.ps1#L36-L40
