@@ -32,6 +32,7 @@ partial class Marshalling
         if (typeof(T) == typeof(Rune))
         {
             *(long*)destination = UnsafeAs<Rune>(value).Value;
+            return;
         }
 
         if (typeof(T) == typeof(sbyte))
@@ -91,6 +92,7 @@ partial class Marshalling
         if (typeof(T) == typeof(Half))
         {
             *(double*)destination = (double)UnsafeAs<Half>(value);
+            return;
         }
 
         if (typeof(T) == typeof(float))
@@ -479,7 +481,7 @@ partial class Marshalling
 
         if (typeof(T) == typeof(ushort))
         {
-            return UnsafeAsT((short)*(long*)value);
+            return UnsafeAsT((ushort)*(long*)value);
         }
 
         if (typeof(T) == typeof(uint))
@@ -490,6 +492,11 @@ partial class Marshalling
         if (typeof(T) == typeof(ulong))
         {
             return UnsafeAsT((ulong)*(long*)value);
+        }
+
+        if (typeof(T) == typeof(nint))
+        {
+            return UnsafeAsT(*(nint*)value);
         }
 
         if (typeof(T) == typeof(Half))
