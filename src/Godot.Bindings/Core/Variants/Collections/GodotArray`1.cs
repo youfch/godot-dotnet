@@ -319,6 +319,34 @@ public sealed class GodotArray<[MustBeVariant] T> :
     /// The <paramref name="collection"/> is <see langword="null"/>.
     /// </exception>
     /// <param name="collection">Collection of <see cref="Variant"/> items to add.</param>
+    public void AddRange(ReadOnlySpan<T> collection)
+    {
+        ThrowIfReadOnly();
+
+        if (collection.IsEmpty)
+        {
+            return;
+        }
+
+        int oldCount = Count;
+        Resize(Count + collection.Length);
+
+        foreach (ref readonly T item in collection)
+        {
+            this[oldCount++] = item;
+        }
+    }
+
+    /// <summary>
+    /// Adds the elements of the specified collection to the end of this <see cref="GodotArray{T}"/>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// The array is read-only.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// The <paramref name="collection"/> is <see langword="null"/>.
+    /// </exception>
+    /// <param name="collection">Collection of <see cref="Variant"/> items to add.</param>
     public void AddRange(IEnumerable<T> collection)
     {
         ThrowIfReadOnly();
