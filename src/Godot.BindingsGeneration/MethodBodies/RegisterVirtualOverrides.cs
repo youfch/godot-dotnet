@@ -1,0 +1,142 @@
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using Godot.BindingsGeneration.ApiDump;
+using Godot.BindingsGeneration.Reflection;
+
+namespace Godot.BindingsGeneration;
+
+internal sealed class RegisterVirtualOverrides : MethodBody
+{
+    private readonly TypeInfo _type;
+
+    private readonly List<(MethodInfo Method, GodotMethodInfo EngineMethod)> _virtualMethods;
+
+    public override bool RequiresUnsafeCode => true;
+
+    public RegisterVirtualOverrides(TypeInfo type, List<(MethodInfo Method, GodotMethodInfo EngineMethod)> virtualMethods)
+    {
+        _type = type;
+        _virtualMethods = virtualMethods;
+    }
+
+    public override void Write(MethodBase owner, IndentedTextWriter writer)
+    {
+        if (_type.BaseType is not null)
+        {
+            writer.WriteLine($"{_type.BaseType.FullNameWithGlobal}.RegisterVirtualOverrides(type, context);");
+        }
+        foreach (var (method, _) in _virtualMethods)
+        {
+            writer.OpenBlock();
+
+            // Determine if the virtual method is overridden. Only overridden methods are registered,
+            // so Godot can skip calling them and fallback to the default behavior implemented on the C++ side.
+            writer.WriteLine("bool isOverriden = false;");
+            {
+                writer.WriteLine($"global::System.Reflection.MethodInfo methodInfo = type.GetMethod(nameof({_type.FullNameWithGlobal}.{method.Name}), global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.NonPublic, [");
+                for (int i = 0; i < method.Parameters.Count; i++)
+                {
+                    var parameter = method.Parameters[i];
+                    writer.Write($"typeof({parameter.Type.FullNameWithGlobal})");
+                    if (i < method.Parameters.Count - 1)
+                    {
+                        writer.Write(", ");
+                    }
+                }
+                writer.WriteLine("]);");
+
+                writer.WriteLine("if (methodInfo is not null)");
+                writer.OpenBlock();
+
+                writer.WriteLine($"bool isMethodDeclaredInDerivedType = methodInfo.DeclaringType != typeof({_type.FullNameWithGlobal});");
+                writer.WriteLine("global::System.Reflection.MethodInfo baseDefinition = methodInfo.GetBaseDefinition();");
+                writer.WriteLine("bool isMethodDeclaredAsOverride = baseDefinition != methodInfo;");
+                writer.WriteLine($"bool isBaseDefinitionFromCorrectBaseType = baseDefinition.DeclaringType == typeof({_type.FullNameWithGlobal});");
+                writer.WriteLine("isOverriden = isMethodDeclaredInDerivedType && isMethodDeclaredAsOverride && isBaseDefinitionFromCorrectBaseType;");
+
+                writer.CloseBlock();
+            }
+            writer.WriteLineNoTabs("");
+
+            writer.WriteLine("if (isOverriden)");
+            writer.OpenBlock();
+
+            // For `Node._Ready`, use a non-static lambda to capture the context so
+            // we can call `RegisterRpcMethods` before invoking the virtual method.
+            bool isNodeReady = _type.FullName == "Godot.Node" && method.Name == "_Ready";
+
+            writer.Write($"context.BindVirtualMethodOverride(MethodName.{method.Name}, ");
+            if (isNodeReady)
+            {
+                writer.Write($"({_type.FullNameWithGlobal} __instance");
+            }
+            else
+            {
+                writer.Write($"static ({_type.FullNameWithGlobal} __instance");
+            }
+            if (method.Parameters.Count > 0)
+            {
+                writer.Write(", ");
+            }
+
+            for (int i = 0; i < method.Parameters.Count; i++)
+            {
+                var parameter = method.Parameters[i];
+                string escapedParameterName = SourceCodeWriter.EscapeIdentifier(parameter.Name);
+                if (parameter.Type.IsPointerType)
+                {
+                    writer.Write(KnownTypes.SystemIntPtr.FullNameWithGlobal);
+                }
+                else
+                {
+                    writer.Write(parameter.Type.FullNameWithGlobal);
+                }
+                writer.Write($" {escapedParameterName}");
+                if (i < method.Parameters.Count - 1)
+                {
+                    writer.Write(", ");
+                }
+            }
+
+            writer.WriteLine(") =>");
+            writer.WriteLine('{');
+            writer.Indent++;
+
+            if (isNodeReady)
+            {
+                writer.WriteLine("context.RegisterRpcMethods(__instance);");
+            }
+
+            if (method.ReturnParameter is not null)
+            {
+                writer.Write("return ");
+                if (method.ReturnParameter.Type.IsPointerType)
+                {
+                    writer.Write($"({KnownTypes.SystemIntPtr.FullNameWithGlobal})");
+                }
+            }
+            writer.Write($"__instance.{method.Name}(");
+            for (int i = 0; i < method.Parameters.Count; i++)
+            {
+                var parameter = method.Parameters[i];
+                string escapedParameterName = SourceCodeWriter.EscapeIdentifier(parameter.Name);
+                if (parameter.Type.IsPointerType)
+                {
+                    writer.Write($"({parameter.Type.FullNameWithGlobal})");
+                }
+                writer.Write(escapedParameterName);
+                if (i < method.Parameters.Count - 1)
+                {
+                    writer.Write(", ");
+                }
+            }
+            writer.WriteLine(");");
+
+            writer.Indent--;
+            writer.WriteLine("});");
+            writer.CloseBlock();
+
+            writer.CloseBlock();
+        }
+    }
+}

@@ -61,4 +61,4 @@ internal unsafe static class StringMarshaller
 }
 ```
 
-For types where a simpler conversion is possible, a [marshaller writer](../../../Godot.BindingsGenerator/Marshalling) is preferred.
+For types where a simpler conversion is possible, a [marshaller writer](../../../Godot.BindingsGeneration/Marshalling) is preferred.

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Godot.BindingsGenerator.ApiDump;
-using Godot.BindingsGenerator.Reflection;
+using Godot.BindingsGeneration.ApiDump;
+using Godot.BindingsGeneration.Reflection;
 
 namespace Godot.Common.Tests;
 

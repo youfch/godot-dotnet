@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Library to generate .NET bindings for the Godot game engine from a GDExtension API dump.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Godot.BindingsGeneration.Tasks" />
+    <InternalsVisibleTo Include="Godot.BindingsGeneration.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Godot.BindingsGeneration.ApiDump\Godot.BindingsGeneration.ApiDump.csproj" />
+    <ProjectReference Include="..\Godot.BindingsGeneration.Reflection\Godot.BindingsGeneration.Reflection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Godot.Common\Godot.Common.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClangSharp" Version="$(ClangSharpVersion)" />
+    <PackageReference Include="ClangSharp.PInvokeGenerator" Version="$(ClangSharpVersion)" />
+  </ItemGroup>
+
+</Project>

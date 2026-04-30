@@ -1,6 +1,6 @@
 # Godot.Bindings
 
-.NET bindings for Godot using the GDExtension APIs generated using the [Godot.BindingsGenerator](../Godot.BindingsGenerator) CLI tool.
+.NET bindings for Godot using the GDExtension APIs generated using the [Godot.BindingsGeneration](../Godot.BindingsGeneration) CLI tool.
 
 ## Usage
 

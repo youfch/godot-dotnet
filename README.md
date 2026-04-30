@@ -19,7 +19,7 @@ Directory structure:
 
 ## Generate the bindings
 
-To generate the bindings, see the instructions in the [Godot.BindingsGenerator](src/Godot.BindingsGenerator) tool project.
+To generate the bindings, see the instructions in the [Godot.BindingsGeneration](src/Godot.BindingsGeneration) tool project.
 
 Normally the tool does not need to be used directly, use the `build.sh`/`build.cmd` scripts at the root of the repository to build the projects in this repository which will also generate the bindings. See more instructions below.
 

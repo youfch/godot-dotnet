@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(RepoRoot)src\Godot.BindingsGenerator.ApiDump\Godot.BindingsGenerator.ApiDump.csproj" />
-    <ProjectReference Include="$(RepoRoot)src\Godot.BindingsGenerator.Reflection\Godot.BindingsGenerator.Reflection.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Godot.BindingsGeneration.ApiDump\Godot.BindingsGeneration.ApiDump.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\Godot.BindingsGeneration.Reflection\Godot.BindingsGeneration.Reflection.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Godot.BindingsGenerator.ApiDump\Godot.BindingsGenerator.ApiDump.csproj" PrivateAssets="all" />
-    <ProjectReference Include="..\Godot.BindingsGenerator.Reflection\Godot.BindingsGenerator.Reflection.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Godot.BindingsGeneration.ApiDump\Godot.BindingsGeneration.ApiDump.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Godot.BindingsGeneration.Reflection\Godot.BindingsGeneration.Reflection.csproj" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

@@ -3,8 +3,8 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Godot.BindingsGenerator.ApiDump;
-using Godot.BindingsGenerator.Reflection;
+using Godot.BindingsGeneration.ApiDump;
+using Godot.BindingsGeneration.Reflection;
 
 namespace Godot.Common;
 
