@@ -5,6 +5,7 @@ syntax: glob
 # Tool Runtime Dir
 .dotnet
 .packages
+.godot
 
 # User-specific files
 *.rsuser

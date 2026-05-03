@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Project reference ensures the test game is compiled whenever this project is built.
+      The compiled DLL is what Godot's dotnet module loads at test runtime.
+    -->
+    <ProjectReference Include="..\Godot.Bindings.IntegrationTests.TestGame\Godot.Bindings.IntegrationTests.TestGame.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.Versioning" Version="$(NuGetVersioningVersion)" />
+  </ItemGroup>
+
+</Project>

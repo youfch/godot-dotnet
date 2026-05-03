@@ -21,6 +21,7 @@ usage()
   echo "  --build                    Build solution (short: -b)"
   echo "  --rebuild                  Rebuild solution"
   echo "  --test                     Run all unit tests in the solution (short: -t)"
+  echo "  --integrationTest          Run all integration tests in the solution"
   echo "  --pack                     Package build outputs into NuGet packages"
   echo "  --publish                  Publish artifacts (e.g. packages, symbols)"
   echo "  --clean                    Clean the solution"
@@ -107,6 +108,9 @@ while [[ $# > 0 ]]; do
     -test|-t)
       test=true
       ;;
+    -integrationtest)
+      integration_test=true
+      ;;
     -projects)
       projects=$2
       shift
@@ -152,6 +156,9 @@ if [[ -n "${rebuild:-}" ]]; then
 fi
 if [[ -n "${test:-}" ]]; then
   args+=("--test")
+fi
+if [[ -n "${integration_test:-}" ]]; then
+  args+=("--integrationTest")
 fi
 if [[ -n "${pack:-}" ]]; then
   args+=("--pack")

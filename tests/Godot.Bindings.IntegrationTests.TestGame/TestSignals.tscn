@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://TestSignals.gd" id="1_testsignals"]
+
+[node name="TestSignals" type="Node"]
+script = ExtResource("1_testsignals")
+
+[node name="Instance" type="TestSignals" parent="."]
+
+[connection signal="custom_signal" from="Instance" to="." method="_on_custom_signal"]

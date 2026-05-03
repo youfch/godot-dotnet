@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://TestSingletons.gd" id="1_testsingletons"]
+
+[node name="TestSingletons" type="Node"]
+script = ExtResource("1_testsingletons")

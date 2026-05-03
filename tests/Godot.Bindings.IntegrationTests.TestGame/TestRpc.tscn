@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://TestRpc.gd" id="1_testrpc"]
+
+[node name="TestRpc" type="Node"]
+script = ExtResource("1_testrpc")
+
+[node name="Instance" type="TestRpc" parent="."]

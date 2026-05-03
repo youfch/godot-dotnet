@@ -16,19 +16,16 @@ jobs:
           - name: 🐧 Linux (x64)
             os: ubuntu-22.04
             rid: linux-x64
-            run-sample-project: true
             cibuild-script: ./eng/common/cibuild.sh --warnaserror false
 
           - name: 🏁 Windows (x64)
             os: windows-latest
             rid: win-x64
-            run-sample-project: false
             cibuild-script: ./eng/common/CIBuild.cmd -warnAsError 0
 
           - name: 🍎 macOS (x64)
             os: macos-latest
             rid: osx-arm64
-            run-sample-project: false
             cibuild-script: ./eng/common/cibuild.sh --warnaserror false
 
     steps:
@@ -50,39 +47,7 @@ jobs:
 
       - name: Build and test solution
         run: |
-          ${{ matrix.cibuild-script }} /p:GenerateGodotBindings=true
-
-      - name: Build sample project
-        run: |
-          cd samples/Summator
-          dotnet publish Extension -r ${{ matrix.rid }} -o Game/lib
-
-      - name: Download latest Godot artifacts
-        uses: dsnopek/action-download-artifact@1322f74e2dac9feed2ee76a32d9ae1ca3b4cf4e9
-        if: ${{ matrix.run-sample-project }}
-        with:
-          repo: godotengine/godot
-          branch: master
-          event: push
-          workflow: linux_builds.yml
-          workflow_conclusion: success
-          name: linux-editor-mono
-          search_artifacts: true
-          check_artifacts: true
-          ensure_latest: true
-          path: godot-artifacts
-
-      - name: Run sample project
-        if: ${{ matrix.run-sample-project }}
-        timeout-minutes: 10
-        run: |
-          chmod +x ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono
-          ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono --version
-
-          # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
-          ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono --path samples/Summator/Game --editor --headless --quit >/dev/null 2>&1 || true
-
-          ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono --path samples/Summator/Game --debug --headless --quit
+          ${{ matrix.cibuild-script }} --integrationTest /p:GenerateGodotBindings=true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

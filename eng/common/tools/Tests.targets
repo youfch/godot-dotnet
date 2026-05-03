@@ -10,7 +10,8 @@
     <TestArchitectures Condition="'$(PlatformTarget)' == '' or '$(PlatformTarget)' == 'AnyCpu'">x64</TestArchitectures>
   </PropertyGroup>
 
-  <Target Name="Test" DependsOnTargets="$(_GetTestsToRunTarget);RunTests" Condition="'$(IsTestProject)' == 'true'" />
+  <Target Name="Test" DependsOnTargets="$(_GetTestsToRunTarget);RunTests" Condition="'$(IsUnitTestProject)' == 'true' or '$(IsPerformanceTestProject)' == 'true'" />
+  <Target Name="IntegrationTest" DependsOnTargets="$(_GetTestsToRunTarget);RunTests" Condition="'$(IsIntegrationTestProject)' == 'true'" />
 
   <ItemGroup>
     <_TestArchitectureItems Include="$(TestArchitectures)" />

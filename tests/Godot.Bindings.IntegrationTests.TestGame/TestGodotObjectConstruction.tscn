@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://TestGodotObjectConstruction.gd" id="1_qesh5"]
+
+[node name="TestGodotObjectConstruction" type="Node"]
+script = ExtResource("1_qesh5")
+
+[node name="Instance" type="TestGodotObjectConstruction" parent="."]

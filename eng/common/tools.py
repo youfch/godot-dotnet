@@ -41,6 +41,9 @@ rebuild: bool = False
 # True to run the test projects.
 test: bool = False
 
+# True to run the integration test projects.
+integration_test: bool = False
+
 # True to package build outputs into NuGet packages.
 pack: bool = False
 
@@ -94,7 +97,7 @@ global_json: Namespace
 
 
 def init(args: Namespace) -> None:
-    global projects, ci, configuration, exclude_ci_binary_log, binary_log, restore, build, rebuild, test, pack, publish, clean, verbosity, node_reuse, warn_as_error, msbuild_engine, use_global_nuget_cache, exclude_prerelease_vs, product_build, push_nupkgs_local, repo_root, eng_root, artifacts_dir, toolset_dir, tools_dir, log_dir, temp_dir, global_json
+    global projects, ci, configuration, exclude_ci_binary_log, binary_log, restore, build, rebuild, test, integration_test, pack, publish, clean, verbosity, node_reuse, warn_as_error, msbuild_engine, use_global_nuget_cache, exclude_prerelease_vs, product_build, push_nupkgs_local, repo_root, eng_root, artifacts_dir, toolset_dir, tools_dir, log_dir, temp_dir, global_json
 
     # Initialize variables if they aren't already defined.
     projects = args.projects.split(";") if args.projects else []
@@ -106,6 +109,7 @@ def init(args: Namespace) -> None:
     build = _get_value_or_default(args.build, False)
     rebuild = _get_value_or_default(args.rebuild, False)
     test = _get_value_or_default(args.test, False)
+    integration_test = _get_value_or_default(args.integrationTest, False)
     pack = _get_value_or_default(args.pack, False)
     publish = _get_value_or_default(args.publish, False)
     clean = _get_value_or_default(args.clean, False)

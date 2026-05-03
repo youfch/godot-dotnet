@@ -1,0 +1,7 @@
+[*.cs]
+# CA1822: Mark members as static
+# We intentionally have instance methods that are not static to test instance method bindings work.
+dotnet_diagnostic.CA1822.severity = none
+# CA1707: Remove the underscores from type name
+# We intentionally use underscores in type names to "namespace" them and avoid name clashes with other tests.
+dotnet_diagnostic.CA1707.severity = none
