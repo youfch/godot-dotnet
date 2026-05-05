@@ -18,6 +18,15 @@ internal unsafe class GodotObjectMarshaller
     /// </returns>
     internal static GodotObject? GetOrCreateManagedInstance(nint nativePtr)
     {
+        // IMPORTANT: `incrementReferenceCount` is set to true here because this method is used when
+        // unmarshalling and we have to increment the reference count to account for the C# reference.
+        // Calling it with `incrementReferenceCount` set to false would be dangerous and should only
+        // be done in very specific scenarios, so we don't want to expose the parameter to avoid misuse.
+        return GetOrCreateManagedInstance(nativePtr, incrementReferenceCount: true);
+    }
+
+    private static GodotObject? GetOrCreateManagedInstance(nint nativePtr, bool incrementReferenceCount)
+    {
         if (nativePtr == 0)
         {
             return null;
@@ -28,24 +37,66 @@ internal unsafe class GodotObjectMarshaller
         if (instance is not null)
         {
             var gcHandle = GCHandle.FromIntPtr((nint)instance);
-            return (GodotObject?)gcHandle.Target;
+            var target = (GodotObject?)gcHandle.Target;
+            HandleRefCounted(target, incrementReferenceCount);
+            return target;
         }
 
-        // Otherwise, try to look up the create helper.
+        // Otherwise, try to look up the correct binding callbacks.
         NativeGodotStringName nativeClassName = default;
+        GDExtensionInstanceBindingCallbacks bindingCallbacks;
         if (GodotBridge.GDExtensionInterface.object_get_class_name((void*)nativePtr, GodotBridge.LibraryPtr, nativeClassName.GetUnsafeAddress()))
         {
-            using StringName nativeClassNameManaged = StringName.CreateCopying(nativeClassName);
-            Debug.Assert(InteropUtils.CreateHelpers.ContainsKey(nativeClassNameManaged), $"Create helper for class named '{nativeClassNameManaged}' not found.");
-            if (InteropUtils.CreateHelpers.TryGetValue(nativeClassNameManaged, out var createHelper))
+            if (GodotRegistry.TryGetClassRegistrationContext(nativeClassName, out var context))
             {
-                return createHelper(nativePtr);
+                // If the returned class name is in the registry, it means this is an user-defined type
+                // so it doesn't have binding callbacks and should have been found by the previous lookup.
+                // This likely means the C# instance has been disposed, so we'll attempt to fall back to
+                // the closest native type. This is undefined behavior and will likely still break somewhere
+                // down the line, but it seems safer than falling back to GodotObject.
+                nativeClassName = context.NativeClassName.NativeValue.DangerousSelfRef;
+            }
+
+            var lookup = InteropUtils.BindingCallbacks.GetAlternateLookup<NativeGodotStringName>();
+            if (!lookup.TryGetValue(nativeClassName, out bindingCallbacks))
+            {
+                Debug.Fail($"Binding callbacks for '{StringName.CreateTakingOwnership(nativeClassName)}' not found.");
+                bindingCallbacks = GodotObject.BindingCallbacks;
             }
         }
+        else
+        {
+            bindingCallbacks = GodotObject.BindingCallbacks;
+        }
 
-        // We couldn't find an existing C# instance or create helper.
-        // We'll just create a GodotObject instance since that should always be a common ancestor.
-        return new GodotObject(nativePtr);
+        {
+            instance = GodotBridge.GDExtensionInterface.object_get_instance_binding((void*)nativePtr, GodotBridge.LibraryPtr, &bindingCallbacks);
+            Debug.Assert(instance is not null, "Instance binding should have been created by now.");
+            var gcHandle = GCHandle.FromIntPtr((nint)instance);
+            var target = (GodotObject?)gcHandle.Target;
+            HandleRefCounted(target, incrementReferenceCount);
+            return target;
+        }
+
+        static void HandleRefCounted(GodotObject? obj, bool incrementReferenceCount)
+        {
+            if (obj is null || obj is not RefCounted refCounted)
+            {
+                return;
+            }
+
+            if (!incrementReferenceCount)
+            {
+                // If we're receiving an instance but we're not supposed to call `InitRef`,
+                // it means the engine already incremented the reference count for us
+                // (e.g., from a ptrcall return). So we just mark it as owned to avoid
+                // incrementing the reference count again in the future.
+                refCounted.MarkAsReferenceOwned();
+                return;
+            }
+
+            refCounted.InitRefOnlyOnce();
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -63,8 +114,11 @@ internal unsafe class GodotObjectMarshaller
 
     public static GodotObject? ConvertFromUnmanaged(nint* value)
     {
+        // IMPORTANT: `incrementReferenceCount` is set to false here because this method
+        // is always used to unmarshall ptrcall returns, and in these cases the reference
+        // count has already been incremented to account for the C# reference.
         Debug.Assert(value is not null);
-        return GetOrCreateManagedInstance(*value);
+        return GetOrCreateManagedInstance(*value, incrementReferenceCount: false);
     }
 
     public static void Free(nint* value)

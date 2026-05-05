@@ -706,7 +706,7 @@ partial class Marshalling
                 // Even if T is not RefCounted, the instance could still be RefCounted.
                 // For example, in a virtual method like `EditorPlugin::_Handles(GodotObject)`
                 // where the GodotObject parameter could be a RefCounted since it's a derived type.
-                // So let's attempt to get the ref ptr anyway, even thought doing this has a cost
+                // So let's attempt to get the ref ptr anyway, even though doing this has a cost
                 // it should not crash. If the GodotObject is not RefCounted it will just return null.
                 void* refPtr = GodotBridge.GDExtensionInterface.ref_get_object(value);
                 if (refPtr is not null)

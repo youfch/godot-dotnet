@@ -37,7 +37,7 @@ public sealed class GodotObjectTests : IntegrationTestBase
         return Verify("res://TestGodotObjectDisposal.tscn");
     }
 
-    [Fact(Skip = "InstanceIsValid does not work, it's fixed in the WIP branch where we use a new construction/destruction implementation using the GDExtension callbacks.")]
+    [Fact]
     public Task GodotObjectInstanceIsValid()
     {
         return Verify("res://TestGodotObjectInstanceIsValid.tscn");
