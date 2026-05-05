@@ -77,6 +77,14 @@ partial class GodotObject : IDisposable
 
         GodotBridge.GDExtensionInterface.object_set_instance_binding((void*)NativePtr, GodotBridge.LibraryPtr, (void*)gcHandlePtr, &bindingsCallbacks);
 
+        if (this is Node node && IsUserDefinedType())
+        {
+            if (GodotRegistry.TryGetClassRegistrationContext(GetType(), out var context))
+            {
+                context.RegisterRpcMethods(node);
+            }
+        }
+
         bool IsUserDefinedType()
         {
             // If this type is not defined in this assembly, it must be a user-defined type.

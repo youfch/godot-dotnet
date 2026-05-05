@@ -61,19 +61,8 @@ internal sealed class RegisterVirtualOverrides : MethodBody
             writer.WriteLine("if (isOverriden)");
             writer.OpenBlock();
 
-            // For `Node._Ready`, use a non-static lambda to capture the context so
-            // we can call `RegisterRpcMethods` before invoking the virtual method.
-            bool isNodeReady = _type.FullName == "Godot.Node" && method.Name == "_Ready";
-
             writer.Write($"context.BindVirtualMethodOverride(MethodName.{method.Name}, ");
-            if (isNodeReady)
-            {
-                writer.Write($"({_type.FullNameWithGlobal} __instance");
-            }
-            else
-            {
-                writer.Write($"static ({_type.FullNameWithGlobal} __instance");
-            }
+            writer.Write($"static ({_type.FullNameWithGlobal} __instance");
             if (method.Parameters.Count > 0)
             {
                 writer.Write(", ");
@@ -101,11 +90,6 @@ internal sealed class RegisterVirtualOverrides : MethodBody
             writer.WriteLine(") =>");
             writer.WriteLine('{');
             writer.Indent++;
-
-            if (isNodeReady)
-            {
-                writer.WriteLine("context.RegisterRpcMethods(__instance);");
-            }
 
             if (method.ReturnParameter is not null)
             {

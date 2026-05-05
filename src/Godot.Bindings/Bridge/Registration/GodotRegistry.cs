@@ -15,8 +15,14 @@ namespace Godot.Bridge;
 /// </summary>
 public static partial class GodotRegistry
 {
+    private static readonly Dictionary<Type, ClassRegistrationContext> _registeredClassesByType = [];
     private static readonly Dictionary<StringName, ClassRegistrationContext> _registeredClasses = new(StringNameEqualityComparer.Default);
     private static readonly Stack<StringName> _classRegisterStack = [];
+
+    internal static bool TryGetClassRegistrationContext(Type type, [NotNullWhen(true)] out ClassRegistrationContext? context)
+    {
+        return _registeredClassesByType.TryGetValue(type, out context);
+    }
 
     /// <summary>
     /// Registers a class with a configuration function that registers its members.
@@ -95,6 +101,7 @@ public static partial class GodotRegistry
         }
 
         context = new ClassRegistrationContext(className);
+        _registeredClassesByType[typeof(T)] = context;
         _registeredClasses[className] = context;
         _classRegisterStack.Push(className);
 
@@ -169,6 +176,8 @@ public static partial class GodotRegistry
 
     internal static unsafe void UnregisterAllClasses()
     {
+        _registeredClassesByType.Clear();
+
         while (_classRegisterStack.TryPop(out StringName? className))
         {
             NativeGodotStringName* classNameNativePtr = className.NativeValue.DangerousSelfRef.GetUnsafeAddress();

@@ -26,7 +26,4 @@ public partial class TestRpc : Control
     {
         Rpc(MethodName.TestRpcLocal, value);
     }
-
-    // TODO: There's a bug where if the _Ready method is not overridden, the RPC methods are not registered. This is because we intentionally avoid calling virtual methods that aren't overridden for performance, but it's the only place where we could register the RPC methods.
-    protected override void _Ready() { }
 }
