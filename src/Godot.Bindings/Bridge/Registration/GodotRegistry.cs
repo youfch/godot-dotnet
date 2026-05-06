@@ -175,10 +175,7 @@ public static partial class GodotRegistry
 
         context.RegisterBindings();
 
-        if (InteropUtils.RegisterVirtualOverridesHelpers.TryGetValue(godotNativeName, out var registerVirtualOverrides))
-        {
-            registerVirtualOverrides(typeof(T), context);
-        }
+        InteropUtils.RegisterVirtualOverrides(typeof(T), context);
     }
 
     internal static unsafe void UnregisterAllClasses()

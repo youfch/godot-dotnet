@@ -57,8 +57,7 @@ internal unsafe class GodotObjectMarshaller
                 nativeClassName = context.NativeClassName.NativeValue.DangerousSelfRef;
             }
 
-            var lookup = InteropUtils.BindingCallbacks.GetAlternateLookup<NativeGodotStringName>();
-            if (!lookup.TryGetValue(nativeClassName, out bindingCallbacks))
+            if (!InteropUtils.TryGetBindingCallbacks(nativeClassName, out bindingCallbacks))
             {
                 Debug.Fail($"Binding callbacks for '{StringName.CreateTakingOwnership(nativeClassName)}' not found.");
                 bindingCallbacks = GodotObject.BindingCallbacks;

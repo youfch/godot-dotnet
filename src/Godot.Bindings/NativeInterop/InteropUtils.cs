@@ -7,13 +7,44 @@ namespace Godot.NativeInterop;
 
 internal static partial class InteropUtils
 {
-    internal static FrozenDictionary<StringName, GDExtensionInstanceBindingCallbacks> BindingCallbacks { get; private set; }
+    private static FrozenDictionary<StringName, GDExtensionInstanceBindingCallbacks> _bindingCallbacks;
 
-    internal delegate void RegisterVirtualOverrideHelper([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.NonPublicMethods)] Type type, ClassRegistrationContext context);
-    internal static FrozenDictionary<StringName, RegisterVirtualOverrideHelper> RegisterVirtualOverridesHelpers { get; private set; }
+    private delegate void RegisterVirtualOverrideHelper([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.NonPublicMethods)] Type type, ClassRegistrationContext context);
+
+    private static FrozenDictionary<StringName, RegisterVirtualOverrideHelper> _registerVirtualOverridesHelpers;
 
     static InteropUtils()
     {
         EnsureHelpersInitialized();
+    }
+
+    internal static bool TryGetBindingCallbacks(StringName className, [NotNullWhen(true)] out GDExtensionInstanceBindingCallbacks bindingCallbacks)
+    {
+        if (_bindingCallbacks.TryGetValue(className, out bindingCallbacks))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static bool TryGetBindingCallbacks(NativeGodotStringName className, [NotNullWhen(true)] out GDExtensionInstanceBindingCallbacks bindingCallbacks)
+    {
+        var bindingCallbacksLookup = _bindingCallbacks.GetAlternateLookup<NativeGodotStringName>();
+        if (bindingCallbacksLookup.TryGetValue(className, out bindingCallbacks))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static void RegisterVirtualOverrides([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.NonPublicMethods)] Type type, ClassRegistrationContext context)
+    {
+        // It's fine if there is no helper for this class, it may just mean there are no virtual overrides to register.
+        if (_registerVirtualOverridesHelpers.TryGetValue(context.NativeClassName, out var registerVirtualOverrides))
+        {
+            registerVirtualOverrides(type, context);
+        }
     }
 }

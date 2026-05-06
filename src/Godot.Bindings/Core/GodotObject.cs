@@ -112,7 +112,7 @@ partial class GodotObject : IDisposable
             var bindingCallbacks = GDExtensionInstanceBindingCallbacks.Default;
             if (!IsUserDefinedType())
             {
-                if (!InteropUtils.BindingCallbacks.TryGetValue(options.NativeClassName, out bindingCallbacks))
+                if (!InteropUtils.TryGetBindingCallbacks(options.NativeClassName, out bindingCallbacks))
                 {
                     throw new InvalidOperationException(SR.FormatInvalidOperation_BindingCallbacksNotFound(GetType()));
                 }

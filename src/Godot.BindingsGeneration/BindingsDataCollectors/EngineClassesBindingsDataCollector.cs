@@ -102,8 +102,8 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
                     VisibilityAttributes = VisibilityAttributes.Private,
                     Attributes =
                     {
-                        "[global::System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(BindingCallbacks))]",
-                        "[global::System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(RegisterVirtualOverridesHelpers))]",
+                        "[global::System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(_bindingCallbacks))]",
+                        "[global::System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(_registerVirtualOverridesHelpers))]",
                     },
                     IsStatic = true,
                     Body = MethodBody.Create(writer =>
@@ -119,8 +119,8 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
                             writer.WriteLine($"registerVirtualOverridesHelpers.Add({type.FullNameWithGlobal}.NativeName, {type.FullNameWithGlobal}.RegisterVirtualOverrides);");
                         }
 
-                        writer.WriteLine("BindingCallbacks = global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(bindingCallbacks, global::Godot.NativeInterop.StringNameEqualityComparer.Default);");
-                        writer.WriteLine("RegisterVirtualOverridesHelpers = global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(registerVirtualOverridesHelpers, global::Godot.NativeInterop.StringNameEqualityComparer.Default);");
+                        writer.WriteLine("_bindingCallbacks = global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(bindingCallbacks, global::Godot.NativeInterop.StringNameEqualityComparer.Default);");
+                        writer.WriteLine("_registerVirtualOverridesHelpers = global::System.Collections.Frozen.FrozenDictionary.ToFrozenDictionary(registerVirtualOverridesHelpers, global::Godot.NativeInterop.StringNameEqualityComparer.Default);");
                     }),
                 },
             }
