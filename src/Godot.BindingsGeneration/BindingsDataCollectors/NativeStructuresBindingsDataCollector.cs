@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using Godot.BindingsGeneration.ApiDump;
 using Godot.BindingsGeneration.Reflection;
 using Godot.Common;
 
@@ -21,7 +22,7 @@ internal sealed class NativeStructuresBindingsDataCollector : BindingsDataCollec
         context.TypeDB.RegisterTypeName("int16_t", KnownTypes.SystemInt16);
         context.TypeDB.RegisterTypeName("int32_t", KnownTypes.SystemInt32);
         context.TypeDB.RegisterTypeName("int64_t", KnownTypes.SystemInt64);
-        context.TypeDB.RegisterTypeName("real_t", context.Options.FloatPrecision == BindingsGeneratorOptions.FloatTypePrecision.DoublePrecision ? KnownTypes.SystemDouble : KnownTypes.SystemSingle);
+        context.TypeDB.RegisterTypeName("real_t", context.Options.FloatPrecision == GodotFloatTypePrecision.Double ? KnownTypes.SystemDouble : KnownTypes.SystemSingle);
         context.TypeDB.RegisterTypeName("ObjectID", KnownTypes.SystemUInt64);
 
         foreach (var nativeStructure in context.Api.NativeStructures)
@@ -32,7 +33,7 @@ internal sealed class NativeStructuresBindingsDataCollector : BindingsDataCollec
                 continue;
             }
 
-            var type = new TypeInfo(NamingUtils.PascalToPascalCase(nativeStructure.Name), "Godot")
+            var type = new TypeInfo(NamingUtils.PascalToPascalCase(nativeStructure.Name), context.Options.Namespace)
             {
                 VisibilityAttributes = VisibilityAttributes.Public,
                 TypeAttributes = TypeAttributes.ValueType,

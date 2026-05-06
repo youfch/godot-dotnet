@@ -10,7 +10,7 @@ internal sealed class GlobalEnumsBindingsDataCollector : BindingsDataCollector
     {
         foreach (var globalEnum in context.Api.GlobalEnums)
         {
-            var @enum = new EnumInfo(NamingUtils.PascalToPascalCase(globalEnum.Name), "Godot")
+            var @enum = new EnumInfo(NamingUtils.PascalToPascalCase(globalEnum.Name), context.Options.Namespace)
             {
                 VisibilityAttributes = VisibilityAttributes.Public,
                 HasFlagsAttribute = globalEnum.IsBitField,

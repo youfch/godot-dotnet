@@ -7,7 +7,7 @@ internal sealed class GlobalConstantsBindingsDataCollector : BindingsDataCollect
 {
     public override void Populate(BindingsData.CollectionContext context)
     {
-        var globals = new TypeInfo("GlobalConstants", "Godot")
+        var globals = new TypeInfo("GlobalConstants", context.Options.Namespace)
         {
             VisibilityAttributes = VisibilityAttributes.Assembly,
             TypeAttributes = TypeAttributes.ReferenceType,

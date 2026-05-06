@@ -70,7 +70,13 @@ public class GenerateTask : Task
 
             Log.LogMessage(MessageImportance.High, $"Generating C# bindings for '{api.Header.VersionFullName}'.");
 
-            BindingsGenerator.Generate(api, OutputPath, TestOutputPath, logger: logger);
+            var writerFactory = new FileBindingsGeneratorWriterFactory()
+            {
+                OutputDirectoryPath = OutputPath,
+                TestOutputDirectoryPath = TestOutputPath,
+            };
+
+            BindingsGenerator.GenerateEngineBindings(api, writerFactory, logger: logger);
 
             return !Log.HasLoggedErrors;
         }

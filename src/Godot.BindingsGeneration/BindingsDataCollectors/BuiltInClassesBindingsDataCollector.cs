@@ -506,7 +506,7 @@ internal sealed class BuiltInClassesBindingsDataCollector : BindingsDataCollecto
             // Color constants.
             if (engineClass.Name == "Color")
             {
-                var colorsType = new TypeInfo("NamedColors", "Godot")
+                var colorsType = new TypeInfo("NamedColors", context.Options.Namespace)
                 {
                     VisibilityAttributes = VisibilityAttributes.Public,
                     TypeAttributes = TypeAttributes.ReferenceType,

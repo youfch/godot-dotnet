@@ -3,27 +3,39 @@ using Godot.BindingsGeneration.ApiDump;
 
 namespace Godot.BindingsGeneration;
 
-internal sealed class BindingsGeneratorOptions
+/// <summary>
+/// Options for configuring the behavior of the bindings generator.
+/// </summary>
+public sealed class BindingsGeneratorOptions
 {
-    public enum ArchBits { Bits32, Bits64 };
-
+    /// <summary>
+    /// The target architecture for the generated bindings.
+    /// </summary>
     public ArchBits Bits { get; init; } = ArchBits.Bits64;
 
-    public enum FloatTypePrecision
-    {
-        SinglePrecision = GodotFloatTypePrecision.Single,
-        DoublePrecision = GodotFloatTypePrecision.Double,
-    };
+    /// <summary>
+    /// The precision of floating-point numbers for the generated bindings.
+    /// </summary>
+    public GodotFloatTypePrecision FloatPrecision { get; init; } = GodotFloatTypePrecision.Single;
 
-    public FloatTypePrecision FloatPrecision { get; init; } = FloatTypePrecision.SinglePrecision;
-
+    /// <summary>
+    /// Gets the build configuration based on the selected floating-point precision and architecture.
+    /// </summary>
     public GodotBuildConfiguration BuildConfiguration =>
         (FloatPrecision, Bits) switch
         {
-            (FloatTypePrecision.SinglePrecision, ArchBits.Bits32) => GodotBuildConfiguration.Float32,
-            (FloatTypePrecision.SinglePrecision, ArchBits.Bits64) => GodotBuildConfiguration.Float64,
-            (FloatTypePrecision.DoublePrecision, ArchBits.Bits32) => GodotBuildConfiguration.Double32,
-            (FloatTypePrecision.DoublePrecision, ArchBits.Bits64) => GodotBuildConfiguration.Double64,
+            (GodotFloatTypePrecision.Single, ArchBits.Bits32) => GodotBuildConfiguration.Float32,
+            (GodotFloatTypePrecision.Single, ArchBits.Bits64) => GodotBuildConfiguration.Float64,
+            (GodotFloatTypePrecision.Double, ArchBits.Bits32) => GodotBuildConfiguration.Double32,
+            (GodotFloatTypePrecision.Double, ArchBits.Bits64) => GodotBuildConfiguration.Double64,
             _ => throw new InvalidOperationException($"Unrecognized build configuration {FloatPrecision}_{Bits}."),
         };
+
+    /// <summary>
+    /// The namespace to use for the generated API.
+    /// </summary>
+    /// <remarks>
+    /// The <c>Godot</c> namespace is reserved for core engine API.
+    /// </remarks>
+    public string Namespace { get; init; } = "Godot";
 }

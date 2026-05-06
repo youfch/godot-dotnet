@@ -33,7 +33,7 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
     {
         foreach (var engineClass in context.Api.Classes)
         {
-            var type = new TypeInfo(NamingUtils.PascalToPascalCase(engineClass.Name), "Godot")
+            var type = new TypeInfo(NamingUtils.PascalToPascalCase(engineClass.Name), context.Options.Namespace)
             {
                 VisibilityAttributes = VisibilityAttributes.Public,
                 TypeAttributes = TypeAttributes.ReferenceType,

@@ -11,7 +11,7 @@ internal sealed class VariadicGenericsBindingsDataCollector : BindingsDataCollec
     {
         // Generate GodotObject.TryCallVirtualMethod<T..> and GodotObject.CallVirtualMethod<T..>
         {
-            var type = new TypeInfo("GodotObject", "Godot")
+            var type = new TypeInfo("GodotObject", context.Options.Namespace)
             {
                 TypeAttributes = TypeAttributes.ReferenceType,
                 IsPartial = true,
@@ -609,7 +609,7 @@ internal sealed class VariadicGenericsBindingsDataCollector : BindingsDataCollec
 
         // Generate Callable.From<T..>
         {
-            var type = new TypeInfo("Callable", "Godot")
+            var type = new TypeInfo("Callable", context.Options.Namespace)
             {
                 TypeAttributes = TypeAttributes.ValueType,
                 IsPartial = true,

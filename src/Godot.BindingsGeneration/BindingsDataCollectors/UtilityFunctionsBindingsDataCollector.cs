@@ -7,7 +7,7 @@ internal sealed class UtilityFunctionsBindingsDataCollector : BindingsDataCollec
 {
     public override void Populate(BindingsData.CollectionContext context)
     {
-        var utilityFunctionsType = new TypeInfo("UtilityFunctions", "Godot")
+        var utilityFunctionsType = new TypeInfo("UtilityFunctions", context.Options.Namespace)
         {
             VisibilityAttributes = VisibilityAttributes.Assembly,
             TypeAttributes = TypeAttributes.ReferenceType,

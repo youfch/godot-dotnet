@@ -15,13 +15,13 @@ internal sealed partial class BindingsData
     /// Collection of C# type information that was created from <see cref="GodotApi"/>.
     /// This type information will be used to generate C# types.
     /// </summary>
-    public ICollection<GeneratedTypeData> Types => _generatedTypesByPath.Values;
+    public IReadOnlyCollection<GeneratedTypeData> Types => _generatedTypesByPath.Values;
 
     /// <summary>
     /// Collection of C# type information for tests that was created from <see cref="GodotApi"/>.
     /// This type information will be used to generate C# test types.
     /// </summary>
-    public ICollection<GeneratedTypeData> TestTypes => _generatedTestTypesByPath.Values;
+    public IReadOnlyCollection<GeneratedTypeData> TestTypes => _generatedTestTypesByPath.Values;
 
     // Stores the types that will be generated.
     private readonly HashSet<TypeInfo> _generatedTypes = [];
@@ -63,7 +63,7 @@ internal sealed partial class BindingsData
     /// <param name="options">Options that configure the bindings generation.</param>
     /// <param name="logger">Logger that logs information messages, warnings, and errors.</param>
     /// <returns>A populated instance of <see cref="BindingsData"/>.</returns>
-    public static BindingsData Create(GodotApi api, BindingsGeneratorOptions options, ILogger? logger = null)
+    internal static BindingsData CreateForCore(GodotApi api, BindingsGeneratorOptions options, ILogger? logger = null)
     {
         logger ??= ConsoleLogger.Instance;
 
