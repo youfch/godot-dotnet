@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -19,6 +21,24 @@ public static partial class GodotRegistry
     private static readonly Dictionary<Type, ClassRegistrationContext> _registeredClassesByType = [];
     private static readonly Dictionary<StringName, ClassRegistrationContext> _registeredClasses = new(StringNameEqualityComparer.Default);
     private static readonly Stack<StringName> _classRegisterStack = [];
+
+    private readonly struct NotificationHandler
+    {
+        private readonly nint _methodPtr;
+
+        public NotificationHandler(nint methodPtr)
+        {
+            _methodPtr = methodPtr;
+        }
+
+        public unsafe void Invoke(GodotObject instance, int what)
+        {
+            var function = (delegate* managed<GodotObject, int, void>)_methodPtr;
+            function(instance, what);
+        }
+    }
+
+    private static readonly Dictionary<Type, ImmutableArray<NotificationHandler>> _notificationHandlersByType = [];
 
     internal static bool TryGetClassRegistrationContext(Type type, [NotNullWhen(true)] out ClassRegistrationContext? context)
     {
@@ -118,6 +138,8 @@ public static partial class GodotRegistry
         _registeredClassesByType[typeof(T)] = context;
         _registeredClasses[className] = context;
         _classRegisterStack.Push(className);
+
+        CacheNotificationHandlers(typeof(T));
 
         configure(context);
 
@@ -369,8 +391,63 @@ public static partial class GodotRegistry
 
             Debug.Assert(instanceObj is not null);
 
-            instanceObj._Notification(what);
+            DispatchNotification(instanceObj, what, reversed);
         }
+    }
+
+    private static void DispatchNotification(GodotObject instanceObj, int what, bool reversed)
+    {
+        if (!_notificationHandlersByType.TryGetValue(instanceObj.GetType(), out var handlers))
+        {
+            // If there are no handlers, this type doesn't override _Notification.
+            return;
+        }
+
+        if (!reversed)
+        {
+            for (int i = handlers.Length - 1; i >= 0; i--)
+            {
+                handlers[i].Invoke(instanceObj, what);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < handlers.Length; i++)
+            {
+                handlers[i].Invoke(instanceObj, what);
+            }
+        }
+    }
+
+    private static void CacheNotificationHandlers([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicMethods | DynamicallyAccessedMemberTypes.PublicMethods)] Type type)
+    {
+        if (_notificationHandlersByType.ContainsKey(type))
+        {
+            // Handlers for this type have already been cached.
+            return;
+        }
+
+        var handlersList = new List<NotificationHandler>();
+
+        MethodInfo? notificationMethod = type.GetMethod(
+            nameof(GodotObject._Notification),
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly,
+            binder: null,
+            [typeof(int)],
+            modifiers: null);
+
+        if (notificationMethod is not null && notificationMethod.GetBaseDefinition() != notificationMethod)
+        {
+            handlersList.Add(new NotificationHandler(notificationMethod.MethodHandle.GetFunctionPointer()));
+        }
+
+        Type? baseType = type.BaseType;
+        if (baseType is not null && _notificationHandlersByType.TryGetValue(baseType, out ImmutableArray<NotificationHandler> baseHandlers))
+        {
+            handlersList.AddRange(baseHandlers);
+        }
+
+        _notificationHandlersByType[type] = [.. handlersList];
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]

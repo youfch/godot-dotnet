@@ -38,6 +38,12 @@ public sealed class GodotObjectTests : IntegrationTestBase
     }
 
     [Fact]
+    public Task GodotObjectNotifications()
+    {
+        return Verify("res://TestGodotObjectNotifications.tscn");
+    }
+
+    [Fact]
     public Task GodotObjectInstanceIsValid()
     {
         return Verify("res://TestGodotObjectInstanceIsValid.tscn");

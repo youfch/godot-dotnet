@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://TestGodotObjectNotifications.gd" id="1_qesh5"]
+
+[node name="TestGodotObjectNotifications" type="Node"]
+script = ExtResource("1_qesh5")
+
+[node name="Child" type="TestGodotObjectNotifications_Derived" parent="."]
