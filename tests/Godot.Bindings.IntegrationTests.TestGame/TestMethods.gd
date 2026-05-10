@@ -8,12 +8,24 @@ func _ready():
 	assert_equal(instance.custom_ref_func(null), -1)
 	var ref1 = TestMethods_ExampleRef.new()
 	ref1.id = 27
+	assert_equal(ref1.get_reference_count(), 1)
 	assert_equal(instance.custom_ref_func(ref1), 27)
+	assert_equal(ref1.get_reference_count(), 2)
+	# Test that the same reference can be passed again
+	# without incrementing the reference count.
+	assert_equal(instance.custom_ref_func(ref1), 27)
+	assert_equal(ref1.get_reference_count(), 2)
 
 	# Pass core reference.
 	assert_equal(instance.image_ref_func(null), "invalid")
 	var image = Image.new()
+	assert_equal(image.get_reference_count(), 1)
 	assert_equal(instance.image_ref_func(image), "valid")
+	assert_equal(image.get_reference_count(), 2)
+	# Test that the same reference can be passed again
+	# without incrementing the reference count.
+	assert_equal(instance.image_ref_func(image), "valid")
+	assert_equal(image.get_reference_count(), 2)
 
 	# Return values.
 	assert_equal(instance.return_something("some string"), "some string42")
@@ -45,6 +57,6 @@ func _ready():
 	exit_with_status()
 
 
-class TestClass:
+class TestClass extends Object:
 	func test(p_msg: String) -> String:
 		return p_msg + " world"
