@@ -636,13 +636,14 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
                 },
                 Body = MethodBody.CreateUnsafe(writer =>
                 {
+                    writer.Write($"Connect(SignalName.{@event.Name}, {KnownTypes.GodotCallable.FullNameWithGlobal}");
                     if (engineSignal.Arguments.Length != 0)
                     {
-                        writer.WriteLine($"Connect(SignalName.{@event.Name}, Callable.CreateWithUnsafeTrampoline(value, &{@event.Name}Trampoline));");
+                        writer.WriteLine($".CreateWithUnsafeTrampoline(value, &{@event.Name}Trampoline));");
                     }
                     else
                     {
-                        writer.WriteLine($"Connect(SignalName.{@event.Name}, Callable.From(value));");
+                        writer.WriteLine(".From(value));");
                     }
                 }),
             };
@@ -654,13 +655,14 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
                 },
                 Body = MethodBody.CreateUnsafe(writer =>
                 {
+                    writer.Write($"Disconnect(SignalName.{@event.Name}, {KnownTypes.GodotCallable.FullNameWithGlobal}");
                     if (engineSignal.Arguments.Length != 0)
                     {
-                        writer.WriteLine($"Disconnect(SignalName.{@event.Name}, Callable.CreateWithUnsafeTrampoline(value, &{@event.Name}Trampoline));");
+                        writer.WriteLine($".CreateWithUnsafeTrampoline(value, &{@event.Name}Trampoline));");
                     }
                     else
                     {
-                        writer.WriteLine($"Disconnect(SignalName.{@event.Name}, Callable.From(value));");
+                        writer.WriteLine(".From(value));");
                     }
                 }),
             };
