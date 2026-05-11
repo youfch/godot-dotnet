@@ -19,7 +19,7 @@ internal sealed class VisualStudioManager : CodeEditorManager
         List<string> args =
         [
             Path.Join(EditorPath.EditorAssembliesPath, "Godot.EditorIntegration.OpenVisualStudio.dll"),
-            EditorPath.ProjectSlnPath,
+            EditorPath.ProjectSolutionPath,
             line >= 0 ? $"{filePath};{line};{column}" : filePath,
         ];
 

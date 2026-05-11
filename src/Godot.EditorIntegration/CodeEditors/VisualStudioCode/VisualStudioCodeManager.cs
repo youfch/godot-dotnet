@@ -66,7 +66,7 @@ internal sealed class VisualStudioCodeManager : CodeEditorManager
             command = _vsCodePath;
         }
 
-        args.Add(Path.GetDirectoryName(EditorPath.ProjectSlnPath)!);
+        args.Add(Path.GetDirectoryName(EditorPath.ProjectSolutionPath)!);
 
         if (line >= 0)
         {

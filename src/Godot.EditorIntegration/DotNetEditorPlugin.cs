@@ -44,7 +44,7 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
             progress.Step(SR.DotNetEditorPlugin_GenerateSolutionEditorProgressStep, 0);
 
             string csprojDir = Path.GetDirectoryName(EditorPath.ProjectCSProjPath)!;
-            string slnDir = Path.GetDirectoryName(EditorPath.ProjectSlnPath)!;
+            string solutionDir = Path.GetDirectoryName(EditorPath.ProjectSolutionPath)!;
             string name = EditorPath.ProjectAssemblyName;
 
             try
@@ -64,11 +64,11 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
             solutionModel.AddBuildType("Debug");
             solutionModel.AddBuildType("ExportDebug");
             solutionModel.AddBuildType("ExportRelease");
-            solutionModel.AddProject(Path.GetRelativePath(slnDir, EditorPath.ProjectCSProjPath));
+            solutionModel.AddProject(Path.GetRelativePath(solutionDir, EditorPath.ProjectCSProjPath));
 
             try
             {
-                string solutionMoniker = Path.Join(slnDir, $"{name}.sln");
+                string solutionMoniker = EditorPath.ProjectSolutionPath;
                 SolutionSerializers.SlnFileV12.SaveAsync(solutionMoniker, solutionModel, CancellationToken.None).Wait();
             }
             catch (IOException e)
@@ -128,7 +128,7 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
         {
             case MenuOptions.CreateSln:
             {
-                if (File.Exists(EditorPath.ProjectSlnPath) || File.Exists(EditorPath.ProjectCSProjPath))
+                if (File.Exists(EditorPath.ProjectSolutionPath) || File.Exists(EditorPath.ProjectCSProjPath))
                 {
                     ShowConfirmCreateSlnDialog();
                 }
@@ -223,7 +223,7 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
 
         EditorInterface.Singleton.GetCommandPalette().AddCommand(SR.DotNetEditorPlugin_CreateCSharpSolution, "dotnet/create_solution", Callable.From(() =>
         {
-            if (File.Exists(EditorPath.ProjectSlnPath) || File.Exists(EditorPath.ProjectCSProjPath))
+            if (File.Exists(EditorPath.ProjectSolutionPath) || File.Exists(EditorPath.ProjectCSProjPath))
             {
                 ShowConfirmCreateSlnDialog();
             }

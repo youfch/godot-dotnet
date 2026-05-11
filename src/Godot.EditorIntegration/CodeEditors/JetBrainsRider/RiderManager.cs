@@ -33,7 +33,7 @@ internal sealed class RiderManager : CodeEditorManager
             }
         }
 
-        _riderFileOpener.OpenFile(_riderPath, EditorPath.ProjectSlnPath, filePath, line, column);
+        _riderFileOpener.OpenFile(_riderPath, EditorPath.ProjectSolutionPath, filePath, line, column);
         return Error.Ok;
     }
 

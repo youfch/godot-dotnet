@@ -28,7 +28,7 @@ internal sealed class CustomEditorManager : CodeEditorManager
     {
         var editorSettings = EditorInterface.Singleton.GetEditorSettings();
 
-        string projectDirPath = Path.GetDirectoryName(EditorPath.ProjectSlnPath)!;
+        string projectDirPath = Path.GetDirectoryName(EditorPath.ProjectSolutionPath)!;
 
         string execCommand = editorSettings.GetSetting(EditorSettingNames.CustomExecPath).As<string>();
         string execArgs = editorSettings.GetSetting(EditorSettingNames.CustomExecPathArgs).As<string>();

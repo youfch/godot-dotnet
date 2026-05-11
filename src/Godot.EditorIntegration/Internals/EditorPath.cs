@@ -11,14 +11,14 @@ namespace Godot.EditorIntegration.Internals;
 internal static class EditorPath
 {
     private static string? _projectAssemblyName;
-    private static string? _slnPath;
+    private static string? _solutionPath;
     private static string? _csprojPath;
     private static string? _editorAssembliesPath;
     private static string? _baseBuildLogsPath;
 
     public static string ProjectAssemblyName => _projectAssemblyName ??= EditorInternal.GetProjectAssemblyName();
 
-    public static string ProjectSlnPath => _slnPath ??= EditorInternal.GetProjectSlnPath();
+    public static string ProjectSolutionPath => _solutionPath ??= EditorInternal.GetProjectSolutionPath();
 
     public static string ProjectCSProjPath => _csprojPath ??= EditorInternal.GetProjectCSProjPath();
 
@@ -40,7 +40,7 @@ internal static class EditorPath
     {
         // Clear all the cached values that may change based on the project settings.
         _projectAssemblyName = null;
-        _slnPath = null;
+        _solutionPath = null;
         _csprojPath = null;
     }
 }

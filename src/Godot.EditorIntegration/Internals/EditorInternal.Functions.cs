@@ -39,13 +39,13 @@ unsafe partial class EditorInternal
         return dest.ToString();
     }
 
-    private static delegate* unmanaged[Cdecl]<NativeGodotString*, void> _get_project_sln_path;
+    private static delegate* unmanaged[Cdecl]<NativeGodotString*, void> _get_project_solution_path;
 
-    public static string GetProjectSlnPath()
+    public static string GetProjectSolutionPath()
     {
-        Debug.Assert(_get_project_sln_path is not null);
+        Debug.Assert(_get_project_solution_path is not null);
         using NativeGodotString dest = default;
-        _get_project_sln_path(&dest);
+        _get_project_solution_path(&dest);
         return dest.ToString();
     }
 

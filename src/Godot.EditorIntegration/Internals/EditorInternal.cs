@@ -21,7 +21,7 @@ internal static partial class EditorInternal
         _get_editor_assemblies_path = (delegate* unmanaged[Cdecl]<NativeGodotString*, void>)LoadProcAddress("get_editor_assemblies_path"u8);
         _get_project_assemblies_path = (delegate* unmanaged[Cdecl]<NativeGodotString*, void>)LoadProcAddress("get_project_assemblies_path"u8);
         _get_project_output_path = (delegate* unmanaged[Cdecl]<NativeGodotString*, NativeGodotString*, void>)LoadProcAddress("get_project_output_path"u8);
-        _get_project_sln_path = (delegate* unmanaged[Cdecl]<NativeGodotString*, void>)LoadProcAddress("get_project_sln_path"u8);
+        _get_project_solution_path = (delegate* unmanaged[Cdecl]<NativeGodotString*, void>)LoadProcAddress("get_project_solution_path"u8);
         _get_project_csproj_path = (delegate* unmanaged[Cdecl]<NativeGodotString*, void>)LoadProcAddress("get_project_csproj_path"u8);
         _get_project_assembly_name = (delegate* unmanaged[Cdecl]<NativeGodotString*, void>)LoadProcAddress("get_project_assembly_name"u8);
         _progress_add_task = (delegate* unmanaged[Cdecl]<NativeGodotString*, NativeGodotString*, int, bool, void>)LoadProcAddress("progress_add_task"u8);
