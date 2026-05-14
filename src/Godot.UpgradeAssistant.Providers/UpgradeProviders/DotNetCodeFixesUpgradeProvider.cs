@@ -162,7 +162,7 @@ internal sealed partial class DotNetCodeFixersUpgradeProvider : IUpgradeAllProvi
 
         if (allDiagnostics.IsEmpty)
         {
-            return ImmutableDictionary<Document, ImmutableArray<Diagnostic>>.Empty;
+            return [];
         }
 
         var diagnosticsByDocument = new Dictionary<Document, ImmutableArray<Diagnostic>.Builder>();
