@@ -54,7 +54,7 @@ public class Vector4Tests
         Assert.True(new Vector4(1, 0, 0, 0).IsNormalized());
         Assert.False(new Vector4(1, 1, 1, 1).IsNormalized());
         Assert.Equal(new Vector4(1, 0, 0, 0), new Vector4(1, 0, 0, 0).Normalized());
-        Assert.Equal(new Vector4(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12, 0, 0), new Vector4(1, 1, 0, 0).Normalized(), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector4(Mathf.Sqrt12, Mathf.Sqrt12, 0, 0), new Vector4(1, 1, 0, 0).Normalized(), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector4(0.5f, 0.5f, 0.5f, 0.5f), new Vector4(1, 1, 1, 1).Normalized(), ApproxEqualityComparer.Instance);
     }
 

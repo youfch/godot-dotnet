@@ -72,7 +72,7 @@ public class Vector3Tests
         var vector2 = new Vector3(20, 30, 40);
 
         Assert.Equal(300f, vector1.LengthSquared());
-        Assert.Equal(10 * MathfExtensions.Sqrt3, vector1.Length(), ApproxEqualityComparer.Instance);
+        Assert.Equal(10 * Mathf.Sqrt3, vector1.Length(), ApproxEqualityComparer.Instance);
         Assert.Equal(2900f, vector2.LengthSquared());
         Assert.Equal(53.8516480713450403125f, vector2.Length(), ApproxEqualityComparer.Instance);
         Assert.Equal(1400f, vector1.DistanceSquaredTo(vector2));
@@ -84,8 +84,8 @@ public class Vector3Tests
     {
         var vector = new Vector3(10, 10, 10);
 
-        Assert.Equal(new Vector3(MathfExtensions.Sqrt13, MathfExtensions.Sqrt13, MathfExtensions.Sqrt13), vector.LimitLength(), ApproxEqualityComparer.Instance);
-        Assert.Equal(5f * new Vector3(MathfExtensions.Sqrt13, MathfExtensions.Sqrt13, MathfExtensions.Sqrt13), vector.LimitLength(5f), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector3(Mathf.Sqrt13, Mathf.Sqrt13, Mathf.Sqrt13), vector.LimitLength(), ApproxEqualityComparer.Instance);
+        Assert.Equal(5f * new Vector3(Mathf.Sqrt13, Mathf.Sqrt13, Mathf.Sqrt13), vector.LimitLength(5f), ApproxEqualityComparer.Instance);
 
         Assert.Equal(new Vector3(0, 5, 10), new Vector3(-5, 5, 15).Clamp(Vector3.Zero, vector));
         Assert.Equal(new Vector3(5, 10, 15), vector.Clamp(new Vector3(0, 10, 15), new Vector3(5, 10, 20)));
@@ -98,8 +98,8 @@ public class Vector3Tests
         Assert.False(new Vector3(1, 1, 1).IsNormalized());
 
         Assert.Equal(new Vector3(1, 0, 0), new Vector3(1, 0, 0).Normalized());
-        Assert.Equal(new Vector3(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12, 0), new Vector3(1, 1, 0).Normalized(), ApproxEqualityComparer.Instance);
-        Assert.Equal(new Vector3(MathfExtensions.Sqrt13, MathfExtensions.Sqrt13, MathfExtensions.Sqrt13), new Vector3(1, 1, 1).Normalized(), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector3(Mathf.Sqrt12, Mathf.Sqrt12, 0), new Vector3(1, 1, 0).Normalized(), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector3(Mathf.Sqrt13, Mathf.Sqrt13, Mathf.Sqrt13), new Vector3(1, 1, 1).Normalized(), ApproxEqualityComparer.Instance);
 
         var vector = new Vector3(3.2f, -5.4f, 6f);
         Assert.Equal(new Vector3(0.368522751763902980457f, -0.621882143601586279522f, 0.6909801595573180883585f), vector.Normalized(), ApproxEqualityComparer.Instance);
@@ -151,7 +151,7 @@ public class Vector3Tests
         var vector = new Vector3(1.2f, 3.4f, 5.6f);
 
         Assert.Equal(-vector.Normalized(), vector.DirectionTo(Vector3.Zero), ApproxEqualityComparer.Instance);
-        Assert.Equal(new Vector3(MathfExtensions.Sqrt13, MathfExtensions.Sqrt13, MathfExtensions.Sqrt13), new Vector3(1, 1, 1).DirectionTo(new Vector3(2, 2, 2)), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector3(Mathf.Sqrt13, Mathf.Sqrt13, Mathf.Sqrt13), new Vector3(1, 1, 1).DirectionTo(new Vector3(2, 2, 2)), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector3(1f / 1.2f, 1f / 3.4f, 1f / 5.6f), vector.Inverse(), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector3(1.2f, 1.4f, 1.6f), vector.PosMod(2f), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector3(0.8f, 0.6f, 0.4f), (-vector).PosMod(2f), ApproxEqualityComparer.Instance);

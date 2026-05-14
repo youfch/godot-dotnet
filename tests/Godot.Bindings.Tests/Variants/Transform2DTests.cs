@@ -209,6 +209,6 @@ public class Transform2DTests
 
         Assert.False(new Transform2D(new Vector2(1.2f, 0), new Vector2(0, 3.4f), Vector2.Zero).IsConformal());
 
-        Assert.False(new Transform2D(new Vector2(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12), new Vector2(0, 1), Vector2.Zero).IsConformal());
+        Assert.False(new Transform2D(new Vector2(Mathf.Sqrt12, Mathf.Sqrt12), new Vector2(0, 1), Vector2.Zero).IsConformal());
     }
 }

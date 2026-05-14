@@ -401,10 +401,10 @@ public class ProjectionTests
     public void LodMultiplier()
     {
         var proj = Projection.CreatePerspective(60, 1, 1, 40, false);
-        Assert.Equal(2 * MathfExtensions.Sqrt3 / 3, proj.GetLodMultiplier(), ApproxEqualityComparer.Instance);
+        Assert.Equal(2 * Mathf.Sqrt3 / 3, proj.GetLodMultiplier(), ApproxEqualityComparer.Instance);
 
         proj = Projection.CreatePerspective(120, 1.5f, 0.5f, 20, false);
-        Assert.Equal(3 * MathfExtensions.Sqrt3, proj.GetLodMultiplier(), ApproxEqualityComparer.Instance);
+        Assert.Equal(3 * Mathf.Sqrt3, proj.GetLodMultiplier(), ApproxEqualityComparer.Instance);
 
         proj = Projection.CreateOrthogonal(15, 20, 10, 12, 5, 15);
         Assert.Equal(5, proj.GetLodMultiplier(), ApproxEqualityComparer.Instance);
@@ -423,10 +423,10 @@ public class ProjectionTests
     public void PixelsPerMeter()
     {
         var proj = Projection.CreatePerspective(60, 1, 1, 40, false);
-        Assert.Equal((int)(1536.0f / MathfExtensions.Sqrt3), (int)proj.GetPixelsPerMeter(1024));
+        Assert.Equal((int)(1536.0f / Mathf.Sqrt3), (int)proj.GetPixelsPerMeter(1024));
 
         proj = Projection.CreatePerspective(120, 1.5f, 0.5f, 20, false);
-        Assert.Equal((int)(800.0f / MathfExtensions.Sqrt3), (int)proj.GetPixelsPerMeter(1200));
+        Assert.Equal((int)(800.0f / Mathf.Sqrt3), (int)proj.GetPixelsPerMeter(1200));
 
         proj = Projection.CreateOrthogonal(15, 20, 10, 12, 5, 15);
         Assert.Equal(100, (int)proj.GetPixelsPerMeter(500));

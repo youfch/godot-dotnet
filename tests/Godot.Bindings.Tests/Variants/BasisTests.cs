@@ -183,7 +183,7 @@ public class BasisTests
 
         Assert.False(Basis.FromScale(new Vector3(1.2f, 3.4f, 5.6f)).IsConformal());
 
-        Assert.False(new Basis(new Vector3(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)).IsConformal());
+        Assert.False(new Basis(new Vector3(Mathf.Sqrt12, Mathf.Sqrt12, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)).IsConformal());
 
         Assert.True(new Basis(0, 0, 0, 0, 0, 0, 0, 0, 0).IsConformal());
     }
@@ -201,7 +201,7 @@ public class BasisTests
 
         Assert.False(new Basis(new Vector3(3, 4, 0), new Vector3(4, -3, 0), new Vector3(0, 0, 5)).IsOrthonormal());
 
-        Assert.False(new Basis(new Vector3(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)).IsOrthonormal());
+        Assert.False(new Basis(new Vector3(Mathf.Sqrt12, Mathf.Sqrt12, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)).IsOrthonormal());
 
         Assert.False(new Basis(0, 0, 0, 0, 0, 0, 0, 0, 0).IsOrthonormal());
     }

@@ -32,7 +32,7 @@ public class Vector3ITests
         var vector2 = new Vector3I(20, 30, 40);
 
         Assert.Equal(300, vector1.LengthSquared());
-        Assert.Equal(10 * MathfExtensions.Sqrt3, vector1.Length(), ApproxEqualityComparer.Instance);
+        Assert.Equal(10 * Mathf.Sqrt3, vector1.Length(), ApproxEqualityComparer.Instance);
         Assert.Equal(2900, vector2.LengthSquared());
         Assert.Equal(53.8516480713450403125f, vector2.Length(), ApproxEqualityComparer.Instance);
         Assert.Equal(1400, vector1.DistanceSquaredTo(vector2));

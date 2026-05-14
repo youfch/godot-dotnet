@@ -40,7 +40,7 @@ public class Vector2Tests
 
         Assert.Equal(new Vector2(0.538953602313995361f, 0.84233558177947998f), vector1.Normalized().Slerp(vector2.Normalized(), 0.5f), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector2(0.508990883827209473f, 0.860771894454956055f), vector1.Normalized().Slerp(vector2.Normalized(), 1.0f / 3.0f), ApproxEqualityComparer.Instance);
-        Assert.Equal(new Vector2(5f, 5f) * MathfExtensions.Sqrt12, new Vector2(5, 0).Slerp(new Vector2(0, 5), 0.5f), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector2(5f, 5f) * Mathf.Sqrt12, new Vector2(5, 0).Slerp(new Vector2(0, 5), 0.5f), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector2(1.5f, 1.5f), new Vector2(1, 1).Slerp(new Vector2(2, 2), 0.5f), ApproxEqualityComparer.Instance);
         Assert.Equal(Vector2.Zero, Vector2.Zero.Slerp(Vector2.Zero, 0.5f));
         Assert.Equal(new Vector2(0.5f, 0.5f), Vector2.Zero.Slerp(new Vector2(1, 1), 0.5f));
@@ -74,8 +74,8 @@ public class Vector2Tests
     {
         var vector = new Vector2(10, 10);
 
-        Assert.Equal(new Vector2(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12), vector.LimitLength(), ApproxEqualityComparer.Instance);
-        Assert.Equal(5 * new Vector2(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12), vector.LimitLength(5), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector2(Mathf.Sqrt12, Mathf.Sqrt12), vector.LimitLength(), ApproxEqualityComparer.Instance);
+        Assert.Equal(5 * new Vector2(Mathf.Sqrt12, Mathf.Sqrt12), vector.LimitLength(5), ApproxEqualityComparer.Instance);
 
         Assert.Equal(new Vector2(0, 10), new Vector2(-5, 15).Clamp(Vector2.Zero, vector), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector2(5, 15), vector.Clamp(new Vector2(0, 15), new Vector2(5, 20)), ApproxEqualityComparer.Instance);
@@ -87,7 +87,7 @@ public class Vector2Tests
         Assert.True(new Vector2(1, 0).IsNormalized());
         Assert.False(new Vector2(1, 1).IsNormalized());
         Assert.Equal(new Vector2(1, 0), new Vector2(1, 0).Normalized());
-        Assert.Equal(new Vector2(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12), new Vector2(1, 1).Normalized(), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector2(Mathf.Sqrt12, Mathf.Sqrt12), new Vector2(1, 1).Normalized(), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector2(0.509802390301732898898f, -0.860291533634174266891f), new Vector2(3.2f, -5.4f).Normalized(), ApproxEqualityComparer.Instance);
     }
 
@@ -138,7 +138,7 @@ public class Vector2Tests
         Assert.Equal(1.2f / 3.4f, vector.Aspect(), ApproxEqualityComparer.Instance);
 
         Assert.Equal(-vector.Normalized(), vector.DirectionTo(Vector2.Zero), ApproxEqualityComparer.Instance);
-        Assert.Equal(new Vector2(MathfExtensions.Sqrt12, MathfExtensions.Sqrt12), new Vector2(1, 1).DirectionTo(new Vector2(2, 2)), ApproxEqualityComparer.Instance);
+        Assert.Equal(new Vector2(Mathf.Sqrt12, Mathf.Sqrt12), new Vector2(1, 1).DirectionTo(new Vector2(2, 2)), ApproxEqualityComparer.Instance);
 
         Assert.Equal(new Vector2(1.2f, 1.4f), vector.PosMod(2), ApproxEqualityComparer.Instance);
         Assert.Equal(new Vector2(0.8f, 0.6f), (-vector).PosMod(2), ApproxEqualityComparer.Instance);
