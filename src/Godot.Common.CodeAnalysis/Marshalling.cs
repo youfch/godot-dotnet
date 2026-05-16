@@ -247,7 +247,7 @@ internal static class Marshalling
             return false;
         }
 
-        if (typeKind is TypeKind.Class)
+        if (typeKind is TypeKind.Class or TypeKind.Struct or TypeKind.Interface)
         {
             string typeName = typeSymbol
                 .WithNullableAnnotation(NullableAnnotation.None)
@@ -256,6 +256,14 @@ internal static class Marshalling
             switch (typeName)
             {
                 case KnownTypeNames.SystemCollectionsGenericList:
+                case KnownTypeNames.SystemCollectionsGenericIReadOnlyList:
+                case KnownTypeNames.SystemCollectionsGenericIList:
+                case KnownTypeNames.SystemCollectionsGenericIEnumerable:
+                case KnownTypeNames.SystemCollectionsGenericIReadOnlyCollection:
+                case KnownTypeNames.SystemCollectionsGenericICollection:
+                case KnownTypeNames.SystemCollectionsObjectModelCollection:
+                case KnownTypeNames.SystemCollectionsObjectModelReadOnlyCollection:
+                case KnownTypeNames.SystemCollectionsImmutableImmutableArray:
                 {
                     if (!TryGetArrayLikeElementType(compilation, typeSymbol, out var elementTypeSymbol))
                     {
@@ -280,6 +288,9 @@ internal static class Marshalling
                 }
 
                 case KnownTypeNames.SystemCollectionsGenericDictionary:
+                case KnownTypeNames.SystemCollectionsGenericIReadOnlyDictionary:
+                case KnownTypeNames.SystemCollectionsGenericIDictionary:
+                case KnownTypeNames.SystemCollectionsImmutableImmutableDictionary:
                 {
                     if (!TryGetDictionaryLikeKeyValueTypes(compilation, typeSymbol, out var keyTypeSymbol, out var valueTypeSymbol))
                     {
@@ -408,16 +419,24 @@ internal static class Marshalling
             return true;
         }
 
-        if (typeKind == TypeKind.Class)
+        if (typeKind is TypeKind.Class or TypeKind.Struct or TypeKind.Interface)
         {
             string typeName = arrayLikeTypeSymbol
                 .WithNullableAnnotation(NullableAnnotation.None)
                 .FullQualifiedNameOmitGlobalWithoutGenericTypeArguments();
-            if (typeName == KnownTypeNames.SystemCollectionsGenericList)
+            if (typeName is KnownTypeNames.SystemCollectionsGenericList
+             or KnownTypeNames.SystemCollectionsGenericIReadOnlyList
+             or KnownTypeNames.SystemCollectionsGenericIList
+             or KnownTypeNames.SystemCollectionsGenericIEnumerable
+             or KnownTypeNames.SystemCollectionsGenericIReadOnlyCollection
+             or KnownTypeNames.SystemCollectionsGenericICollection
+             or KnownTypeNames.SystemCollectionsObjectModelCollection
+             or KnownTypeNames.SystemCollectionsObjectModelReadOnlyCollection
+             or KnownTypeNames.SystemCollectionsImmutableImmutableArray)
             {
                 // We don't specially-recognize any non-generic array-like types.
-                // If the type is generic, it must be `System.Collections.Generic.List<T>`
-                // so we can get the element type from its first type argument.
+                // If the type is generic, it must be one of the types specially recognized
+                // so we know the element type is the first type argument.
                 return TryGetFirstTypeArgument(arrayLikeTypeSymbol, out elementTypeSymbol);
             }
         }
@@ -467,15 +486,18 @@ internal static class Marshalling
 
         var typeKind = dictionaryLikeTypeSymbol.TypeKind;
 
-        if (typeKind == TypeKind.Class)
+        if (typeKind is TypeKind.Class or TypeKind.Interface)
         {
             string typeName = dictionaryLikeTypeSymbol
                 .WithNullableAnnotation(NullableAnnotation.None)
                 .FullQualifiedNameOmitGlobalWithoutGenericTypeArguments();
-            if (typeName == KnownTypeNames.SystemCollectionsGenericDictionary)
+            if (typeName is KnownTypeNames.SystemCollectionsGenericDictionary
+             or KnownTypeNames.SystemCollectionsGenericIReadOnlyDictionary
+             or KnownTypeNames.SystemCollectionsGenericIDictionary
+             or KnownTypeNames.SystemCollectionsImmutableImmutableDictionary)
             {
                 // We don't specially-recognize any non-generic dictionary-like types.
-                // If the type is generic, it must be `System.Collections.Generic.Dictionary<TKey, TValue>`
+                // If the type is generic, it must be one of the types specially recognized
                 // so we can get the element type from its first and second type arguments.
                 return TryGetFirstAndSecondTypeArguments(dictionaryLikeTypeSymbol, out keyTypeSymbol, out valueTypeSymbol);
             }

@@ -25,7 +25,18 @@ internal static class KnownTypeNames
 
     // System collections.
     public const string SystemCollectionsGenericList = "System.Collections.Generic.List";
+    public const string SystemCollectionsGenericIReadOnlyList = "System.Collections.Generic.IReadOnlyList";
+    public const string SystemCollectionsGenericIList = "System.Collections.Generic.IList";
+    public const string SystemCollectionsGenericIEnumerable = "System.Collections.Generic.IEnumerable";
+    public const string SystemCollectionsGenericIReadOnlyCollection = "System.Collections.Generic.IReadOnlyCollection";
+    public const string SystemCollectionsGenericICollection = "System.Collections.Generic.ICollection";
+    public const string SystemCollectionsObjectModelCollection = "System.Collections.ObjectModel.Collection";
+    public const string SystemCollectionsObjectModelReadOnlyCollection = "System.Collections.ObjectModel.ReadOnlyCollection";
+    public const string SystemCollectionsImmutableImmutableArray = "System.Collections.Immutable.ImmutableArray";
+    public const string SystemCollectionsImmutableImmutableDictionary = "System.Collections.Immutable.ImmutableDictionary";
     public const string SystemCollectionsGenericDictionary = "System.Collections.Generic.Dictionary";
+    public const string SystemCollectionsGenericIReadOnlyDictionary = "System.Collections.Generic.IReadOnlyDictionary";
+    public const string SystemCollectionsGenericIDictionary = "System.Collections.Generic.IDictionary";
 
     // Godot types.
     public const string GodotAabb = "Godot.Aabb";

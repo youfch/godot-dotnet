@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Immutable;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Godot;
 using Godot.Collections;
 
@@ -29,6 +31,36 @@ public partial class NodeWithSpeciallyRecognizedMarshalling : Node
     public List<int> MethodThatReturnsListOfInts() => [];
 
     [BindProperty]
+    public ImmutableArray<int> ImmutableArrayOfInts { get; set; }
+
+    [BindProperty]
+    public IReadOnlyList<int> IReadOnlyListOfInts { get; set; }
+
+    [BindMethod]
+    public void MethodThatTakesImmutableArrayOfInts(ImmutableArray<int> array) { }
+
+    [BindMethod]
+    public void MethodThatTakesIListOfInts(IList<int> list) { }
+
+    [BindMethod]
+    public ImmutableArray<int> MethodThatReturnsImmutableArrayOfInts() => [];
+
+    [BindMethod]
+    public IEnumerable<int> MethodThatReturnsIEnumerableOfInts() => [];
+
+    [BindProperty]
+    public IReadOnlyCollection<int> IReadOnlyCollectionOfInts { get; set; }
+
+    [BindMethod]
+    public void MethodThatTakesICollectionOfInts(ICollection<int> collection) { }
+
+    [BindMethod]
+    public Collection<int> MethodThatReturnsCollectionOfInts() => [];
+
+    [BindMethod]
+    public ReadOnlyCollection<int> MethodThatReturnsReadOnlyCollectionOfInts() => [];
+
+    [BindProperty]
     public bool[] ArrayOfBooleans { get; set; }
 
     [BindMethod]
@@ -45,4 +77,13 @@ public partial class NodeWithSpeciallyRecognizedMarshalling : Node
 
     [BindMethod]
     public List<bool> MethodThatReturnsListOfBooleans() => [];
+
+    [BindProperty]
+    public ImmutableArray<bool> ImmutableArrayOfBooleans { get; set; }
+
+    [BindMethod]
+    public void MethodThatTakesImmutableArrayOfBooleans(ImmutableArray<bool> array) { }
+
+    [BindMethod]
+    public ImmutableArray<bool> MethodThatReturnsImmutableArrayOfBooleans() => [];
 }

@@ -132,13 +132,21 @@ internal sealed class ReplaceSpeciallyRecognizedTypeWithGodotTypeCodeFix : CodeF
             AddGenericGodotArray(elementTypeSymbol);
         }
 
-        if (originalTypeSymbol.TypeKind is TypeKind.Class)
+        if (originalTypeSymbol.TypeKind is TypeKind.Class or TypeKind.Struct or TypeKind.Interface)
         {
             string typeName = originalTypeSymbol.FullQualifiedNameOmitGlobalWithoutGenericTypeArguments();
 
             switch (typeName)
             {
                 case KnownTypeNames.SystemCollectionsGenericList:
+                case KnownTypeNames.SystemCollectionsGenericIReadOnlyList:
+                case KnownTypeNames.SystemCollectionsGenericIList:
+                case KnownTypeNames.SystemCollectionsGenericIEnumerable:
+                case KnownTypeNames.SystemCollectionsGenericIReadOnlyCollection:
+                case KnownTypeNames.SystemCollectionsGenericICollection:
+                case KnownTypeNames.SystemCollectionsObjectModelCollection:
+                case KnownTypeNames.SystemCollectionsObjectModelReadOnlyCollection:
+                case KnownTypeNames.SystemCollectionsImmutableImmutableArray:
                 {
                     if (!Marshalling.TryGetArrayLikeElementType(compilation, originalTypeSymbol, out var elementTypeSymbol))
                     {
@@ -155,6 +163,9 @@ internal sealed class ReplaceSpeciallyRecognizedTypeWithGodotTypeCodeFix : CodeF
                 }
 
                 case KnownTypeNames.SystemCollectionsGenericDictionary:
+                case KnownTypeNames.SystemCollectionsGenericIReadOnlyDictionary:
+                case KnownTypeNames.SystemCollectionsGenericIDictionary:
+                case KnownTypeNames.SystemCollectionsImmutableImmutableDictionary:
                 {
                     if (!Marshalling.TryGetDictionaryLikeKeyValueTypes(compilation, originalTypeSymbol, out var keyTypeSymbol, out var valueTypeSymbol))
                     {
@@ -179,19 +190,34 @@ internal sealed class ReplaceSpeciallyRecognizedTypeWithGodotTypeCodeFix : CodeF
 
         void AddGenericGodotArray(ITypeSymbol elementTypeSymbol)
         {
-            equivalentTypes.Add(new TypeReplaceOption($"GodotArray<{elementTypeSymbol.Name}>", [
-                "Godot.Collections",
-                elementTypeSymbol.ContainingNamespace.FullQualifiedNameOmitGlobal(),
-            ]));
+            HashSet<string> namespaces = ["Godot.Collections"];
+            string elementTypeFullName = GetSimpleTypeName(elementTypeSymbol, namespaces);
+
+            equivalentTypes.Add(new TypeReplaceOption($"GodotArray<{elementTypeFullName}>", namespaces));
         }
 
-        void AddGenericGodotDictionary(ITypeSymbol keyTypeSymbol, ITypeSymbol valueTypeSymbol)
+        void AddGenericGodotDictionary(ITypeSymbol keyTypeSymbol, ITypeSymbol valueTypeSymbol, string beforeTypeName = "")
         {
-            equivalentTypes.Add(new TypeReplaceOption($"GodotDictionary<{keyTypeSymbol.Name}, {valueTypeSymbol.Name}>", [
-                "Godot.Collections",
-                keyTypeSymbol.ContainingNamespace.FullQualifiedNameOmitGlobal(),
-                valueTypeSymbol.ContainingNamespace.FullQualifiedNameOmitGlobal(),
-            ]));
+            HashSet<string> namespaces = ["Godot.Collections"];
+            string keyElementTypeName = GetSimpleTypeName(keyTypeSymbol, namespaces);
+            string valueElementTypeName = GetSimpleTypeName(valueTypeSymbol, namespaces);
+
+            equivalentTypes.Add(new TypeReplaceOption($"GodotDictionary<{keyElementTypeName}, {valueElementTypeName}>", namespaces));
+        }
+
+        string GetSimpleTypeName(ITypeSymbol typeSymbol, HashSet<string> namespaces)
+        {
+            string fullTypeName = typeSymbol.FullQualifiedNameOmitGlobal();
+            if (!fullTypeName.Contains('.'))
+            {
+                // If the fully-qualified name results in a simple name, it's likely a keyword.
+                // Use this as the name and don't add a using directive for the namespace.
+                return fullTypeName;
+            }
+
+            // Otherwise, add the containing namespace and use the simple name.
+            namespaces.Add(typeSymbol.ContainingNamespace.FullQualifiedNameOmitGlobal());
+            return typeSymbol.Name;
         }
     }
 }
