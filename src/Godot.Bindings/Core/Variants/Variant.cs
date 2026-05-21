@@ -25,6 +25,8 @@ public partial struct Variant : IDisposable
     {
         private readonly NativeGodotVariant.Movable _native;
 
+        private bool _disposed;
+
         private readonly WeakReference<IDisposable>? _weakReferenceToSelf;
 
         public Disposer(in NativeGodotVariant.Movable nativeVar)
@@ -46,6 +48,13 @@ public partial struct Variant : IDisposable
 
         private void Dispose(bool disposing)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
             _native.DangerousSelfRef.Dispose();
 
             if (_weakReferenceToSelf is not null)
