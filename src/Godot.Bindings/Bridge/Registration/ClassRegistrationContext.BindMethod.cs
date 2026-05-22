@@ -11,7 +11,7 @@ partial class ClassRegistrationContext
 {
     private readonly HashSet<StringName> _registeredMethods = new(StringNameEqualityComparer.Default);
 
-    private readonly Dictionary<StringName, GCHandle> _registeredMethodHandles = [];
+    private readonly Dictionary<StringName, GCHandle<MethodDefinition>> _registeredMethodHandles = [];
 
     // The MethodDefinition must be referenced somewhere so the GC doesn't release it.
     // We need to keep it alive because it contains the MethodBindInvoker that
@@ -127,10 +127,10 @@ partial class ClassRegistrationContext
                 methodInfoNative.default_arguments = argsDefaultValues;
             }
 
-            var methodGCHandle = GCHandle.Alloc(methodDefinition, GCHandleType.Normal);
+            var methodGCHandle = new GCHandle<MethodDefinition>(methodDefinition);
             _registeredMethodHandles.Add(methodDefinition.Name, methodGCHandle);
 
-            nint methodDefinitionPtr = GCHandle.ToIntPtr(methodGCHandle);
+            nint methodDefinitionPtr = GCHandle<MethodDefinition>.ToIntPtr(methodGCHandle);
             methodInfoNative.call_func = &CallWithVariantArgs_Native;
             methodInfoNative.ptrcall_func = &CallWithPtrArgs_Native;
             methodInfoNative.method_userdata = (void*)methodDefinitionPtr;
@@ -146,10 +146,8 @@ partial class ClassRegistrationContext
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)methodUserData);
-            var method = (MethodDefinition?)gcHandle.Target;
-
-            Debug.Assert(method is not null);
+            var gcHandle = GCHandle<MethodDefinition>.FromIntPtr((nint)methodUserData);
+            var method = gcHandle.Target;
 
             method.Invoker.CallWithPtrArgs(method, instance, args, outRet);
         }
@@ -161,10 +159,8 @@ partial class ClassRegistrationContext
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)methodUserData);
-            var method = (MethodDefinition?)gcHandle.Target;
-
-            Debug.Assert(method is not null);
+            var gcHandle = GCHandle<MethodDefinition>.FromIntPtr((nint)methodUserData);
+            var method = gcHandle.Target;
 
             method.Invoker.CallWithVariantArgs(method, instance, new NativeGodotVariantPtrSpan(args, (int)argCount), outRet, outError);
         }

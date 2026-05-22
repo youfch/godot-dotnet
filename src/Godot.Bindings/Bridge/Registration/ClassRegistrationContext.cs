@@ -11,9 +11,9 @@ public sealed partial class ClassRegistrationContext : IDisposable
 {
     private bool _disposed;
 
-    private GCHandle _gcHandle;
+    private GCHandle<ClassRegistrationContext> _gcHandle;
 
-    internal GCHandle GCHandle => _gcHandle;
+    internal GCHandle<ClassRegistrationContext> GCHandle => _gcHandle;
 
     internal StringName ClassName { get; }
 
@@ -23,7 +23,7 @@ public sealed partial class ClassRegistrationContext : IDisposable
 
     internal ClassRegistrationContext(StringName className, StringName nativeClassName)
     {
-        _gcHandle = GCHandle.Alloc(this, GCHandleType.Normal);
+        _gcHandle = new GCHandle<ClassRegistrationContext>(this);
         ClassName = className;
         NativeClassName = nativeClassName;
     }
@@ -50,10 +50,10 @@ public sealed partial class ClassRegistrationContext : IDisposable
 
         foreach (var handle in _registeredMethodHandles.Values)
         {
-            handle.Free();
+            handle.Dispose();
         }
         _registeredMethodHandles.Clear();
 
-        _gcHandle.Free();
+        _gcHandle.Dispose();
     }
 }

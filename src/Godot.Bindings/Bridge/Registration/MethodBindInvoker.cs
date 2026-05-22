@@ -71,10 +71,8 @@ public readonly partial struct MethodBindInvoker
 
     private static unsafe GodotObject GetInstanceObject(void* instance)
     {
-        var gcHandle = GCHandle.FromIntPtr((nint)instance);
-        var instanceObj = (GodotObject?)gcHandle.Target;
-
-        Debug.Assert(instanceObj is not null);
+        var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+        var instanceObj = gcHandle.Target;
 
         return instanceObj;
     }

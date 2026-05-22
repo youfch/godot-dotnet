@@ -172,7 +172,7 @@ public static partial class GodotRegistry
             get_virtual_func = null,
             get_virtual_call_data_func = &GetVirtualMethodUserData_Native,
             call_virtual_with_data_func = &CallVirtualMethod_Native,
-            class_userdata = (void*)GCHandle.ToIntPtr(context.GCHandle),
+            class_userdata = (void*)GCHandle<ClassRegistrationContext>.ToIntPtr(context.GCHandle),
             icon_path = &iconPathNative,
         };
 
@@ -222,10 +222,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 StringName nameManaged = StringName.CreateCopying(*name);
                 Variant valueManaged = Variant.CreateCopying(*value);
@@ -248,10 +246,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 StringName nameManaged = StringName.CreateCopying(*name);
 
@@ -283,10 +279,8 @@ public static partial class GodotRegistry
                 return null;
             }
 
-            var gcHandle = GCHandle.FromIntPtr((nint)instance);
-            var instanceObj = (GodotObject?)gcHandle.Target;
-
-            Debug.Assert(instanceObj is not null);
+            var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+            var instanceObj = gcHandle.Target;
 
             var propertyList = instanceObj.GetPropertyListStorage();
             Debug.Assert(propertyList.Count == 0, "Internal error, property list was not freed by engine!");
@@ -319,10 +313,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 var propertyList = instanceObj.GetPropertyListStorage();
                 Debug.Assert(propertyList.Count == count);
@@ -341,10 +333,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 StringName nameManaged = StringName.CreateCopying(*name);
 
@@ -366,10 +356,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 StringName nameManaged = StringName.CreateCopying(*name);
 
@@ -394,10 +382,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 // Convert internal property info to the public managed type.
                 VariantType type = (VariantType)refProperty->type;
@@ -439,10 +425,8 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 DispatchNotification(instanceObj, what, reversed);
             }
@@ -510,14 +494,8 @@ public static partial class GodotRegistry
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)instance);
-
+            var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
             var instanceObj = gcHandle.Target;
-            if (instanceObj is null)
-            {
-                *outIsValid = false;
-                return;
-            }
 
             *outStr = NativeGodotString.Create(instanceObj.ToString());
             *outIsValid = true;
@@ -533,10 +511,8 @@ public static partial class GodotRegistry
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var context = (ClassRegistrationContext?)gcHandle.Target;
-
-            Debug.Assert(context is not null);
+            var gcHandle = GCHandle<ClassRegistrationContext>.FromIntPtr((nint)userData);
+            var context = gcHandle.Target;
 
             if (context.RegisteredConstructor is null)
             {
@@ -569,10 +545,8 @@ public static partial class GodotRegistry
     {
         try
         {
-            var gcHandleContext = GCHandle.FromIntPtr((nint)userData);
-            var context = (ClassRegistrationContext?)gcHandleContext.Target;
-
-            Debug.Assert(context is not null);
+            var gcHandleContext = GCHandle<ClassRegistrationContext>.FromIntPtr((nint)userData);
+            var context = gcHandleContext.Target;
 
             if (context.RegisteredConstructor is null)
             {
@@ -587,7 +561,7 @@ public static partial class GodotRegistry
                 NativeClassName = context.NativeClassName,
             });
 
-            return (void*)GCHandle.ToIntPtr(instance.GCHandle);
+            return (void*)GCHandle<GodotObject>.ToIntPtr(instance.GCHandle);
         }
         catch (Exception exception) when (ExceptionHandling.IsHandled(exception))
         {
@@ -602,16 +576,14 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 // The 'free' callback is called when the unmanaged object is released,
                 // clear the native pointer so the Dispose doesn't try to release it again.
                 // Also free the GCHandle so it can be released on the managed side.
                 instanceObj.NativePtr = 0;
-                gcHandle.Free();
+                gcHandle.Dispose();
 
                 instanceObj.Dispose();
             }
@@ -626,16 +598,14 @@ public static partial class GodotRegistry
         {
             if (instance is not null)
             {
-                var gcHandle = GCHandle.FromIntPtr((nint)instance);
-                var instanceObj = (GodotObject?)gcHandle.Target;
-
-                Debug.Assert(instanceObj is not null);
+                var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+                var instanceObj = gcHandle.Target;
 
                 // The 'free' callback is called when the unmanaged object is released,
                 // clear the native pointer so the Dispose doesn't try to release it again.
                 // Also free the GCHandle so it can be released on the managed side.
                 instanceObj.NativePtr = 0;
-                gcHandle.Free();
+                gcHandle.Dispose();
 
                 instanceObj.Dispose();
             }
@@ -654,10 +624,9 @@ public static partial class GodotRegistry
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var context = (ClassRegistrationContext?)gcHandle.Target;
+            var gcHandle = GCHandle<ClassRegistrationContext>.FromIntPtr((nint)userData);
+            var context = gcHandle.Target;
 
-            Debug.Assert(context is not null);
             Debug.Assert(name is not null);
 
             var lookup = context.RegisteredVirtualMethodOverrides.GetAlternateLookup<NativeGodotStringName>();
@@ -681,10 +650,9 @@ public static partial class GodotRegistry
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var context = (ClassRegistrationContext?)gcHandle.Target;
+            var gcHandle = GCHandle<ClassRegistrationContext>.FromIntPtr((nint)userData);
+            var context = gcHandle.Target;
 
-            Debug.Assert(context is not null);
             Debug.Assert(name is not null);
 
             var lookup = context.RegisteredVirtualMethodOverrides.GetAlternateLookup<NativeGodotStringName>();

@@ -17,14 +17,14 @@ public abstract class CustomCallable : IDisposable
 {
     private bool _disposed;
 
-    private GCHandle _gcHandle;
+    private GCHandle<CustomCallable> _gcHandle;
 
     /// <summary>
     /// Constructs a <see cref="CustomCallable"/>.
     /// </summary>
     public CustomCallable()
     {
-        _gcHandle = GCHandle.Alloc(this, GCHandleType.Normal);
+        _gcHandle = new GCHandle<CustomCallable>(this);
 
         DisposablesTracker.RegisterDisposable(this);
     }
@@ -41,7 +41,7 @@ public abstract class CustomCallable : IDisposable
     {
         var info = new GDExtensionCallableCustomInfo2()
         {
-            callable_userdata = (void*)GCHandle.ToIntPtr(_gcHandle),
+            callable_userdata = (void*)GCHandle<CustomCallable>.ToIntPtr(_gcHandle),
             token = GodotBridge.LibraryPtr,
             object_id = GetObjectId(),
             call_func = &Call_Native,
@@ -144,7 +144,7 @@ public abstract class CustomCallable : IDisposable
 
         _disposed = true;
 
-        _gcHandle.Free();
+        _gcHandle.Dispose();
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
@@ -152,10 +152,8 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var callable = (CustomCallable?)gcHandle.Target;
-
-            Debug.Assert(callable is not null);
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
+            var callable = gcHandle.Target;
 
             if (callable is null)
             {
@@ -176,13 +174,8 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var callable = (CustomCallable?)gcHandle.Target;
-
-            if (callable is null)
-            {
-                return false;
-            }
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
+            var callable = gcHandle.Target;
 
             return callable.IsValid();
         }
@@ -197,12 +190,12 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
             if (gcHandle.Target is IDisposable disposable)
             {
                 disposable.Dispose();
             }
-            gcHandle.Free();
+            gcHandle.Dispose();
         }
         catch (Exception exception) when (ExceptionHandling.IsHandled(exception)) { }
     }
@@ -212,10 +205,8 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var callable = (CustomCallable?)gcHandle.Target;
-
-            Debug.Assert(callable is not null);
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
+            var callable = gcHandle.Target;
 
             return (uint)callable.GetHashCode();
         }
@@ -230,11 +221,11 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandleLeft = GCHandle.FromIntPtr((nint)userDataLeft);
-            var callableLeft = (CustomCallable?)gcHandleLeft.Target;
+            var gcHandleLeft = GCHandle<CustomCallable>.FromIntPtr((nint)userDataLeft);
+            var callableLeft = gcHandleLeft.Target;
 
-            var gcHandleRight = GCHandle.FromIntPtr((nint)userDataRight);
-            var callableRight = (CustomCallable?)gcHandleRight.Target;
+            var gcHandleRight = GCHandle<CustomCallable>.FromIntPtr((nint)userDataRight);
+            var callableRight = gcHandleRight.Target;
 
             return EqualityComparer<CustomCallable>.Default.Equals(callableLeft, callableRight);
         }
@@ -249,11 +240,11 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandleLeft = GCHandle.FromIntPtr((nint)userDataLeft);
-            var callableLeft = (CustomCallable?)gcHandleLeft.Target;
+            var gcHandleLeft = GCHandle<CustomCallable>.FromIntPtr((nint)userDataLeft);
+            var callableLeft = gcHandleLeft.Target;
 
-            var gcHandleRight = GCHandle.FromIntPtr((nint)userDataRight);
-            var callableRight = (CustomCallable?)gcHandleRight.Target;
+            var gcHandleRight = GCHandle<CustomCallable>.FromIntPtr((nint)userDataRight);
+            var callableRight = gcHandleRight.Target;
 
             return Comparer<CustomCallable>.Default.Compare(callableLeft, callableRight) switch
             {
@@ -276,8 +267,8 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var callable = (CustomCallable?)gcHandle.Target;
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
+            var callable = gcHandle.Target;
 
             if (callable is null)
             {
@@ -302,10 +293,8 @@ public abstract class CustomCallable : IDisposable
     {
         try
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var callable = (CustomCallable?)gcHandle.Target;
-
-            Debug.Assert(callable is not null);
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
+            var callable = gcHandle.Target;
 
             *outIsValid = callable.TryGetArgumentCount(out long argCount);
             return argCount;

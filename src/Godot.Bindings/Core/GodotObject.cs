@@ -12,7 +12,7 @@ namespace Godot;
 partial class GodotObject : IDisposable
 {
     internal nint NativePtr;
-    internal readonly GCHandle GCHandle;
+    internal readonly GCHandle<GodotObject> GCHandle;
 
     private readonly WeakReference<GodotObject>? _weakReferenceToSelf;
 
@@ -91,8 +91,8 @@ partial class GodotObject : IDisposable
 
     private unsafe GodotObject(GodotObjectCreationOptions options)
     {
-        GCHandle = GCHandle.Alloc(this, GCHandleType.Normal);
-        nint gcHandlePtr = GCHandle.ToIntPtr(GCHandle);
+        GCHandle = new GCHandle<GodotObject>(this);
+        nint gcHandlePtr = GCHandle<GodotObject>.ToIntPtr(GCHandle);
         _weakReferenceToSelf = DisposablesTracker.RegisterGodotObject(this);
 
         Debug.Assert(options.NativeClassName is not null, "'NativeClassName' must be provided.");

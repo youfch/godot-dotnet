@@ -200,7 +200,7 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
                     writer.WriteLine("SkipPostInitializeNotification = true,");
                     writer.Indent--;
                     writer.WriteLine("});");
-                    writer.WriteLine("return (void*)global::System.Runtime.InteropServices.GCHandle.ToIntPtr(instance.GCHandle);");
+                    writer.WriteLine("return (void*)global::System.Runtime.InteropServices.GCHandle<global::Godot.GodotObject>.ToIntPtr(instance.GCHandle);");
 
                     writer.CloseBlock();
 
@@ -240,7 +240,7 @@ internal sealed class EngineClassesBindingsDataCollector : BindingsDataCollector
                         writer.WriteLine("global::System.Diagnostics.Debug.Assert(singletonPtr is not null);");
                         writer.WriteLine($"global::Godot.NativeInterop.GDExtensionInstanceBindingCallbacks bindingCallbacks = {type.FullNameWithGlobal}.BindingCallbacks;");
                         writer.WriteLine("void* gcHandlePtr = global::Godot.Bridge.GodotBridge.GDExtensionInterface.object_get_instance_binding(singletonPtr, global::Godot.Bridge.GodotBridge.LibraryPtr, &bindingCallbacks);");
-                        writer.WriteLine("global::System.Runtime.InteropServices.GCHandle gcHandle = global::System.Runtime.InteropServices.GCHandle.FromIntPtr((nint)gcHandlePtr);");
+                        writer.WriteLine("global::System.Runtime.InteropServices.GCHandle<global::Godot.GodotObject> gcHandle = global::System.Runtime.InteropServices.GCHandle<global::Godot.GodotObject>.FromIntPtr((nint)gcHandlePtr);");
                         writer.WriteLine($"_singleton = ({type.FullNameWithGlobal}?)gcHandle.Target;");
                         writer.WriteLine("global::System.Diagnostics.Debug.Assert(_singleton is not null);");
                         writer.CloseBlock();

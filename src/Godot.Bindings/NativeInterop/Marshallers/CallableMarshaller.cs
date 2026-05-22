@@ -29,9 +29,8 @@ internal static unsafe class CallableMarshaller
         {
             // userData will only be non-null if the Callable is a custom Callable created with our LibraryPtr,
             // and since all our custom Callables derive from the CustomCallable class, then it has to be one.
-            var gcHandle = GCHandle.FromIntPtr((nint)userData);
-            var customCallable = gcHandle.Target as CustomCallable;
-            Debug.Assert(customCallable is not null);
+            var gcHandle = GCHandle<CustomCallable>.FromIntPtr((nint)userData);
+            var customCallable = gcHandle.Target;
 
             return Callable.CreateTakingOwnership(customCallable);
         }

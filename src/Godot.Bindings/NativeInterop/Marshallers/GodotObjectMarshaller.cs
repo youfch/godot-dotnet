@@ -36,8 +36,8 @@ internal unsafe class GodotObjectMarshaller
         void* instance = GodotBridge.GDExtensionInterface.object_get_instance_binding((void*)nativePtr, GodotBridge.LibraryPtr, null);
         if (instance is not null)
         {
-            var gcHandle = GCHandle.FromIntPtr((nint)instance);
-            var target = (GodotObject?)gcHandle.Target;
+            var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+            var target = gcHandle.Target;
             HandleRefCounted(target, incrementReferenceCount);
             return target;
         }
@@ -71,15 +71,15 @@ internal unsafe class GodotObjectMarshaller
         {
             instance = GodotBridge.GDExtensionInterface.object_get_instance_binding((void*)nativePtr, GodotBridge.LibraryPtr, &bindingCallbacks);
             Debug.Assert(instance is not null, "Instance binding should have been created by now.");
-            var gcHandle = GCHandle.FromIntPtr((nint)instance);
-            var target = (GodotObject?)gcHandle.Target;
+            var gcHandle = GCHandle<GodotObject>.FromIntPtr((nint)instance);
+            var target = gcHandle.Target;
             HandleRefCounted(target, incrementReferenceCount);
             return target;
         }
 
-        static void HandleRefCounted(GodotObject? obj, bool incrementReferenceCount)
+        static void HandleRefCounted(GodotObject obj, bool incrementReferenceCount)
         {
-            if (obj is null || obj is not RefCounted refCounted)
+            if (obj is not RefCounted refCounted)
             {
                 return;
             }
