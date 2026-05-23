@@ -250,7 +250,7 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
             Flat = false,
             Icon = EditorInterface.Singleton.GetEditorTheme().GetIcon(EditorThemeNames.BuildDotNet, EditorThemeNames.EditorIcons),
             FocusMode = Control.FocusModeEnum.None,
-            Shortcut = EditorInternal.EditorDefineShortcut(EditorShortcutNames.BuildSolution, SR.MSBuildPanel_BuildProject, (Key)KeyModifierMask.MaskAlt | Key.B),
+            Shortcut = EditorInternal.EditorDefineShortcut(EditorShortcutNames.BuildSolution, SR.MSBuildPanel_BuildProject, EditorShortcutKeycodes.BuildProject),
             ShortcutInTooltip = true,
             ThemeTypeVariation = EditorThemeNames.RunBarButton,
         };
