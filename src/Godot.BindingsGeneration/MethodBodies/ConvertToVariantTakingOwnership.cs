@@ -35,6 +35,16 @@ internal sealed class ConvertToVariantTakingOwnership : MethodBody
             writer.WriteLine("// Avoid the interop call if the Variant is already the type we want.");
             writer.WriteLine($"if (value.Type == global::Godot.VariantType.{_targetTypeName})");
             writer.OpenBlock();
+            if (returnType == KnownTypes.SystemIntPtr)
+            {
+                // If the type is Object, we also need to check if the Object ID is zero, which means it's a null reference.
+                writer.WriteLine("if (value.ObjectId == 0)");
+                writer.OpenBlock();
+                writer.WriteLine("// If the Object ID is zero, we can't retrieve it. It has likely been freed already.");
+                writer.WriteLine("// It's effectively a dangling pointer, so we just return null.");
+                writer.WriteLine("return default;");
+                writer.CloseBlock();
+            }
             writer.Write("return ");
             if (_isTypeAPointerInVariant)
             {

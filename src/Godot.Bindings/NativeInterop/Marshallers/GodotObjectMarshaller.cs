@@ -136,7 +136,7 @@ internal unsafe class GodotObjectMarshaller
     {
         Debug.Assert(value is not null);
         Debug.Assert(value->Type == VariantType.Object);
-        nint nativePtr = value->Object;
+        nint nativePtr = NativeGodotVariant.ConvertToObject(*value);
         return GetOrCreateManagedInstance(nativePtr);
     }
 

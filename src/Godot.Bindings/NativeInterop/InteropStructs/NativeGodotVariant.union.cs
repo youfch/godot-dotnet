@@ -287,4 +287,10 @@ partial struct NativeGodotVariant
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => _data._m_obj_data.obj;
     }
+
+    public readonly ulong ObjectId
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _data._m_obj_data.id;
+    }
 }
