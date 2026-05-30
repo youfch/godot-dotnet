@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -15,7 +16,18 @@ namespace Godot.EditorIntegration.Build.Cli;
 internal static class DotNetCliOptions
 {
     public static CliOptionDescriptor<string> SlnOrProject =>
-        new((value, args) => args.Add(value));
+        new((value, args) =>
+        {
+            string path = value;
+            if (OperatingSystem.IsWindows() && path.StartsWith("//", StringComparison.Ordinal))
+            {
+                // On WIndows, when using a network share path, the path may start with "//"
+                // which MSBuild will treat like a switch. Convert to "\\" to make it an
+                // absolute path.
+                path = $"""\\{path.AsSpan(2)}""";
+            }
+            args.Add(path);
+        });
 
     public static CliOptionDescriptor<string?> OutputPath =>
         CliOptionDescriptor.FromString("--output");
