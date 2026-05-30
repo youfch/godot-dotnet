@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithGroupedProperties
+partial class @NodeWithGroupedProperties
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

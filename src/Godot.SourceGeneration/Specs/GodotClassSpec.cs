@@ -89,7 +89,14 @@ internal readonly record struct GodotClassSpec : IEquatable<GodotClassSpec>
 
         if (!string.IsNullOrEmpty(FullyQualifiedNamespace))
         {
-            sb.Append(FullyQualifiedNamespace);
+            if (FullyQualifiedNamespace!.StartsWith("@", StringComparison.Ordinal))
+            {
+                sb.Append(FullyQualifiedNamespace.Substring(1));
+            }
+            else
+            {
+                sb.Append(FullyQualifiedNamespace);
+            }
             sb.Append('.');
         }
 

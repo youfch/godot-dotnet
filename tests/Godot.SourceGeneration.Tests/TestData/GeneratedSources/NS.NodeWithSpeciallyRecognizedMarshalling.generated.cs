@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithSpeciallyRecognizedMarshalling
+partial class @NodeWithSpeciallyRecognizedMarshalling
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

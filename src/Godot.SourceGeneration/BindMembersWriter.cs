@@ -31,11 +31,12 @@ internal static class BindMembersWriter
                 ContainingSymbol.Kind.RecordStruct => "record struct ",
                 var kind => throw new InvalidOperationException($"Invalid symbol kind '{kind}'."),
             });
+            sb.Append('@');
             sb.AppendLine(containingSymbol.SymbolName);
             sb.OpenBlock();
         }
 
-        sb.AppendLine($"partial class {spec.SymbolName}");
+        sb.AppendLine($"partial class @{spec.SymbolName}");
         sb.OpenBlock();
 
         WriteCachedStringNames(sb, spec);

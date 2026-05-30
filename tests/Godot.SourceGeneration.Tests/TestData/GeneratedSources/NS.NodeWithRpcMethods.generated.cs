@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithRpcMethods
+partial class @NodeWithRpcMethods
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

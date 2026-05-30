@@ -149,4 +149,13 @@ public class BindMembersGeneratorTests
             ["NamespaceA.ClassOne.generated.cs", "NamespaceB.ClassTwo.generated.cs"]
         );
     }
+
+    [Fact]
+    public async Task EscapedNames()
+    {
+        await Verifier.Verify(
+            ["NodeWithEscapedName.cs"],
+            ["base.int.generated.cs", "base.int.float.generated.cs"]
+        );
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithNullableProperties
+partial class @NodeWithNullableProperties
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

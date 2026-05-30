@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithMethods
+partial class @NodeWithMethods
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

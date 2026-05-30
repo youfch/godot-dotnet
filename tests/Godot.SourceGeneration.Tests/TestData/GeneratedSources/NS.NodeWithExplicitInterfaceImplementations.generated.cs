@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithExplicitInterfaceImplementations
+partial class @NodeWithExplicitInterfaceImplementations
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

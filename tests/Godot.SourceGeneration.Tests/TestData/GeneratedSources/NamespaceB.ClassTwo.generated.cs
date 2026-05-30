@@ -2,7 +2,7 @@
 
 namespace NamespaceB;
 
-partial class ClassTwo
+partial class @ClassTwo
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {

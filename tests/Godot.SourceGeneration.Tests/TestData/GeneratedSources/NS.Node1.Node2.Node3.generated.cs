@@ -2,11 +2,11 @@
 
 namespace NS;
 
-partial class Node1
+partial class @Node1
 {
-    partial class Node2
+    partial class @Node2
     {
-        partial class Node3
+        partial class @Node3
         {
             public new partial class MethodName : global::Godot.Node.MethodName
             {

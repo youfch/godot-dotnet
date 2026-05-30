@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class NodeWithDefaultMarshalling
+partial class @NodeWithDefaultMarshalling
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {
