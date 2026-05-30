@@ -79,6 +79,15 @@ public class BindMembersGeneratorTests
     }
 
     [Fact]
+    public async Task BindSignalsSealed()
+    {
+        await Verifier.Verify(
+            ["NodeWithSignalsSealed.cs"],
+            ["NS.NodeWithSignalsSealed.generated.cs"]
+        );
+    }
+
+    [Fact]
     public async Task ExplicitInterfaceImplementations()
     {
         await Verifier.Verify(

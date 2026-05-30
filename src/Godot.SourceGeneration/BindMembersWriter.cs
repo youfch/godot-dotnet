@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Godot.Common.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Godot.SourceGeneration;
 
@@ -40,6 +41,8 @@ internal static class BindMembersWriter
         sb.OpenBlock();
 
         WriteCachedStringNames(sb, spec);
+
+        WriteSignalMembers(sb, spec);
 
         sb.AppendLineNoTabs("#pragma warning disable CS0108 // Method might already be defined higher in the hierarchy, that's not an issue.");
         sb.AppendLine("internal static void BindMembers(global::Godot.Bridge.ClassRegistrationContext context)");
@@ -149,13 +152,12 @@ internal static class BindMembersWriter
             sb.OpenBlock();
             foreach (var signal in spec.Signals)
             {
-                string signalName = RemoveSignalDelegateSuffix(signal.SymbolName);
-                if (usedNames.Add(signalName))
+                if (usedNames.Add(signal.EventSymbolName))
                 {
                     string value = !string.IsNullOrEmpty(signal.NameOverride)
                         ? signal.NameOverride!
-                        : signalName;
-                    AddCachedStringName(signalName, value);
+                        : signal.EventSymbolName;
+                    AddCachedStringName(signal.EventSymbolName, value);
                 }
             }
             sb.CloseBlock();
@@ -172,6 +174,102 @@ internal static class BindMembersWriter
                 sb.AppendLine($$"""public static global::Godot.StringName @{{symbolName}} { get; } = global::Godot.StringName.CreateFromUtf8("{{value}}"u8);""");
             }
         }
+    }
+
+    private static void WriteSignalMembers(IndentedStringBuilder sb, GodotClassSpec spec)
+    {
+        foreach (var signal in spec.Signals)
+        {
+            WriteSignalEvent(sb, signal);
+            WriteEmitSignalMethod(sb, signal);
+        }
+    }
+
+    private static void WriteSignalEvent(IndentedStringBuilder sb, GodotSignalSpec signal)
+    {
+        string? accessibility = AccessibilityToKeyword(signal.SymbolDeclaredAccessibility);
+        if (!string.IsNullOrEmpty(accessibility))
+        {
+            sb.Append($"{accessibility} ");
+        }
+
+        sb.AppendLine($"event {signal.SymbolName} @{signal.EventSymbolName}");
+        sb.OpenBlock();
+
+        sb.Append($"add => Connect(SignalName.@{signal.EventSymbolName}, ");
+        AppendCallableFromDelegate(sb, signal);
+        sb.AppendLine(");");
+
+        sb.Append($"remove => Disconnect(SignalName.@{signal.EventSymbolName}, ");
+        AppendCallableFromDelegate(sb, signal);
+        sb.AppendLine(");");
+
+        sb.CloseBlock();
+
+        static void AppendCallableFromDelegate(IndentedStringBuilder sb, GodotSignalSpec signal)
+        {
+            sb.Append("global::Godot.Callable.From");
+            if (signal.Parameters.Count != 0)
+            {
+                sb.Append('<');
+                for (int i = 0; i < signal.Parameters.Count; i++)
+                {
+                    var parameter = signal.Parameters[i];
+                    sb.Append(parameter.FullyQualifiedTypeName);
+                    if (i < signal.Parameters.Count - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                sb.Append('>');
+            }
+            sb.Append("(value.Invoke)");
+        }
+    }
+
+    private static void WriteEmitSignalMethod(IndentedStringBuilder sb, GodotSignalSpec spec)
+    {
+        string? accessibility = AccessibilityToKeyword(spec.EmitSignalMethodAccessibility);
+        if (!string.IsNullOrEmpty(accessibility))
+        {
+            sb.Append($"{accessibility} ");
+        }
+
+        sb.Append($"void EmitSignal{spec.EventSymbolName}(");
+        for (int i = 0; i < spec.Parameters.Count; i++)
+        {
+            var parameter = spec.Parameters[i];
+            sb.Append($"{parameter.FullyQualifiedTypeName} @{parameter.SymbolName}");
+            if (parameter.HasExplicitDefaultValue)
+            {
+                sb.Append($" = {parameter.ExplicitDefaultValue}");
+            }
+            if (i < spec.Parameters.Count - 1)
+            {
+                sb.Append(", ");
+            }
+        }
+        sb.AppendLine(")");
+        sb.OpenBlock();
+
+        sb.Append($"EmitSignal(SignalName.@{spec.EventSymbolName}, [");
+        for (int i = 0; i < spec.Parameters.Count; i++)
+        {
+            var parameter = spec.Parameters[i];
+            if (parameter.TypeKind == TypeKind.Enum)
+            {
+                // Enums need to be cast to long because they are not implicitly convertible to Variant.
+                sb.Append("(long)");
+            }
+            sb.Append($"@{parameter.SymbolName}");
+            if (i < spec.Parameters.Count - 1)
+            {
+                sb.Append(", ");
+            }
+        }
+        sb.AppendLine("]);");
+
+        sb.CloseBlock();
     }
 
     private static void WriteSetIcon(IndentedStringBuilder sb, GodotClassSpec spec)
@@ -453,7 +551,7 @@ internal static class BindMembersWriter
         foreach (var signal in spec.Signals)
         {
             sb.Append("context.BindSignal(new global::Godot.Bridge.SignalDefinition(");
-            sb.Append($"SignalName.@{RemoveSignalDelegateSuffix(signal.SymbolName)})");
+            sb.Append($"SignalName.@{signal.EventSymbolName})");
             if (signal.Parameters.Count == 0)
             {
                 sb.AppendLine(");");
@@ -682,18 +780,18 @@ internal static class BindMembersWriter
         sb.Append(source);
     }
 
-    /// <summary>
-    /// Removes the 'EventHandler' suffix from the name of a signal's delegate.
-    /// </summary>
-    /// <param name="delegateName">The name of the signal's delegate.</param>
-    private static string RemoveSignalDelegateSuffix(string delegateName)
+    private static string? AccessibilityToKeyword(Accessibility accessibility)
     {
-        if (!delegateName.EndsWith("EventHandler", StringComparison.Ordinal))
+        return accessibility switch
         {
-            throw new ArgumentException("Signal delegate must end with 'EventHandler'.", nameof(delegateName));
-        }
-
-        return delegateName.Substring(0, delegateName.Length - "EventHandler".Length);
+            Accessibility.Public => "public",
+            Accessibility.Private => "private",
+            Accessibility.Protected => "protected",
+            Accessibility.Internal => "internal",
+            Accessibility.ProtectedAndInternal => "private protected",
+            Accessibility.ProtectedOrInternal => "protected internal",
+            Accessibility.NotApplicable or _ => null,
+        };
     }
 
     private static bool IsAscii(this string value)

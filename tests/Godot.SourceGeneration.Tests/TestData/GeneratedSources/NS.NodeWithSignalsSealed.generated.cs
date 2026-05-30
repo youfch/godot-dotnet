@@ -2,7 +2,7 @@
 
 namespace NS;
 
-partial class @NodeWithSignals
+partial class @NodeWithSignalsSealed
 {
     public new partial class MethodName : global::Godot.Node.MethodName
     {
@@ -26,7 +26,7 @@ partial class @NodeWithSignals
         add => Connect(SignalName.@MySignal, global::Godot.Callable.From(value.Invoke));
         remove => Disconnect(SignalName.@MySignal, global::Godot.Callable.From(value.Invoke));
     }
-    protected void EmitSignalMySignal()
+    private void EmitSignalMySignal()
     {
         EmitSignal(SignalName.@MySignal, []);
     }
@@ -35,7 +35,7 @@ partial class @NodeWithSignals
         add => Connect(SignalName.@MyNamedSignal, global::Godot.Callable.From(value.Invoke));
         remove => Disconnect(SignalName.@MyNamedSignal, global::Godot.Callable.From(value.Invoke));
     }
-    protected void EmitSignalMyNamedSignal()
+    private void EmitSignalMyNamedSignal()
     {
         EmitSignal(SignalName.@MyNamedSignal, []);
     }
@@ -44,7 +44,7 @@ partial class @NodeWithSignals
         add => Connect(SignalName.@MySignalWithParameters, global::Godot.Callable.From<int, float, string, global::NS.MyEnum>(value.Invoke));
         remove => Disconnect(SignalName.@MySignalWithParameters, global::Godot.Callable.From<int, float, string, global::NS.MyEnum>(value.Invoke));
     }
-    protected void EmitSignalMySignalWithParameters(int @a, float @b, string @c, global::NS.MyEnum @d)
+    private void EmitSignalMySignalWithParameters(int @a, float @b, string @c, global::NS.MyEnum @d)
     {
         EmitSignal(SignalName.@MySignalWithParameters, [@a, @b, @c, (long)@d]);
     }
@@ -53,7 +53,7 @@ partial class @NodeWithSignals
         add => Connect(SignalName.@MySignalWithNamedParameters, global::Godot.Callable.From<int, string>(value.Invoke));
         remove => Disconnect(SignalName.@MySignalWithNamedParameters, global::Godot.Callable.From<int, string>(value.Invoke));
     }
-    protected void EmitSignalMySignalWithNamedParameters(int @myNumber, string @myString)
+    private void EmitSignalMySignalWithNamedParameters(int @myNumber, string @myString)
     {
         EmitSignal(SignalName.@MySignalWithNamedParameters, [@myNumber, @myString]);
     }
@@ -62,7 +62,7 @@ partial class @NodeWithSignals
         add => Connect(SignalName.@MySignalWithOptionalParameters, global::Godot.Callable.From<int, int>(value.Invoke));
         remove => Disconnect(SignalName.@MySignalWithOptionalParameters, global::Godot.Callable.From<int, int>(value.Invoke));
     }
-    protected void EmitSignalMySignalWithOptionalParameters(int @requiredParameter, int @optionalParameter = 42)
+    private void EmitSignalMySignalWithOptionalParameters(int @requiredParameter, int @optionalParameter = 42)
     {
         EmitSignal(SignalName.@MySignalWithOptionalParameters, [@requiredParameter, @optionalParameter]);
     }
@@ -70,7 +70,7 @@ partial class @NodeWithSignals
     internal static void BindMembers(global::Godot.Bridge.ClassRegistrationContext context)
 #pragma warning restore CS0108 // Method might already be defined higher in the hierarchy, that's not an issue.
     {
-        context.BindConstructor(() => new global::NS.NodeWithSignals());
+        context.BindConstructor(() => new global::NS.NodeWithSignalsSealed());
         context.BindSignal(new global::Godot.Bridge.SignalDefinition(SignalName.@MySignal));
         context.BindSignal(new global::Godot.Bridge.SignalDefinition(SignalName.@MyNamedSignal));
         context.BindSignal(new global::Godot.Bridge.SignalDefinition(SignalName.@MySignalWithParameters)

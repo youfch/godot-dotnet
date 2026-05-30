@@ -57,11 +57,35 @@ internal static class SignalSpecCollector
             parameters.Add(parameterSpec.Value);
         }
 
+        Accessibility emitSignalMethodAccessibility = Accessibility.Protected;
+        if (delegateTypeSymbol.ContainingType.IsSealed)
+        {
+            // Sealed classes can't declare protected members.
+            emitSignalMethodAccessibility = Accessibility.Private;
+        }
+
         return new GodotSignalSpec()
         {
             SymbolName = delegateTypeSymbol.Name,
+            EventSymbolName = RemoveSignalDelegateSuffix(delegateTypeSymbol.Name),
+            SymbolDeclaredAccessibility = delegateTypeSymbol.DeclaredAccessibility,
+            EmitSignalMethodAccessibility = emitSignalMethodAccessibility,
             Parameters = [.. parameters],
             NameOverride = nameOverride,
         };
+    }
+
+    /// <summary>
+    /// Removes the 'EventHandler' suffix from the name of a signal's delegate.
+    /// </summary>
+    /// <param name="delegateName">The name of the signal's delegate.</param>
+    private static string RemoveSignalDelegateSuffix(string delegateName)
+    {
+        if (!delegateName.EndsWith("EventHandler", StringComparison.Ordinal))
+        {
+            throw new ArgumentException("Signal delegate must end with 'EventHandler'.", nameof(delegateName));
+        }
+
+        return delegateName.Substring(0, delegateName.Length - "EventHandler".Length);
     }
 }

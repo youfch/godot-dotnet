@@ -132,7 +132,7 @@ public readonly partial struct Callable
     /// </summary>
     /// <param name="target">Object that contains the method.</param>
     /// <param name="method">Name of the method that will be called.</param>
-    public unsafe Callable(GodotObject target, StringName method)
+    public Callable(GodotObject target, StringName method)
     {
         NativeValue = NativeGodotCallable.Create(GodotObject.GetNativePtr(target), method.NativeValue.DangerousSelfRef).AsMovable();
     }

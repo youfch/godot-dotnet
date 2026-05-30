@@ -1,5 +1,6 @@
 using System;
 using Godot.Common.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Godot.SourceGeneration;
 
@@ -21,6 +22,11 @@ internal readonly record struct GodotPropertySpec : IEquatable<GodotPropertySpec
     /// <see cref="MarshalInfo.FullyQualifiedTypeName"/> when marshalling).
     /// </summary>
     public required string FullyQualifiedTypeName { get; init; }
+
+    /// <summary>
+    /// The kind of the property's type.
+    /// </summary>
+    public required TypeKind TypeKind { get; init; }
 
     /// <summary>
     /// If this method is an explicit interface implementation,

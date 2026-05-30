@@ -12,4 +12,10 @@ public sealed class SignalTests : IntegrationTestBase
     {
         return Verify("res://TestSignals.tscn");
     }
+
+    [Fact]
+    public Task SignalConnection()
+    {
+        return Verify("res://TestSignalsConnection.tscn");
+    }
 }

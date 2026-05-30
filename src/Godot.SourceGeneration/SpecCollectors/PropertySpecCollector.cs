@@ -143,6 +143,7 @@ internal static class PropertySpecCollector
         {
             SymbolName = symbolName,
             FullyQualifiedTypeName = typeSymbol.FullQualifiedNameWithGlobal(),
+            TypeKind = typeSymbol.TypeKind,
             MarshalInfo = marshalInfo,
             NameOverride = nameOverride,
         };

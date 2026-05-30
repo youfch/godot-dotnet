@@ -5,7 +5,7 @@ namespace NS;
 public enum MyEnum { A, B, C }
 
 [GodotClass]
-public partial class NodeWithSignals : Node
+public sealed partial class NodeWithSignalsSealed : Node
 {
     public delegate void UnexposedDelegate();
 
